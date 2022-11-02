@@ -6,6 +6,8 @@ import "./components/ui/common.css";
 import "./components/ui/box.css";
 import App from "./components/app/app";
 import reportWebVitals from "./reportWebVitals";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
 ReactDOM.render(
   <React.StrictMode>
