@@ -10,47 +10,55 @@ export const StringComponent: React.FC = () => {
   const [word, setWord] = useState<string[]>([]);
   const [loader, setLoader] = useState(false);
   const [nextReverse, setnNextReverse] = useState<string[]>([]);
+  const [start, setStart] = useState(0);
+  const [end, setEnd] = useState(0);
+  //let newOrder:string[] = [];
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value)
   }
 
   useEffect(() => {
-    setnNextReverse(input.split(""));   
+    setnNextReverse(input.split(""));
   }, [input])
+
+  useEffect(() => {
+    let interval: number | null = null;
+    if (loader) {
+      let start = 0;
+      let end = nextReverse.length - 1;
+      let newOrder = [...nextReverse];
+      interval = window.setInterval(() => {
+        if (start < end) {
+          newOrder = switchFunc(newOrder, start, end)
+          setWord(newOrder);
+          start++;
+          end--;
+        }
+        if (start >= end) {
+          setLoader(false);
+          clearInterval(interval!);
+        }
+      }, 1000)
+    }
+    return function cleanup() {
+      interval && clearInterval(interval)
+    }
+  }, [loader])
 
   const handleClick = async () => {
     setWord(nextReverse);
+    setEnd(nextReverse.length - 1);
+    setStart(0);
     setLoader(true);
-    await reverse();
-    setLoader(false);
   }
 
-  const sleep = (ms: number) => new Promise(
-    resolve => setTimeout(resolve, ms)
-  );
-
-  const switchFunc = (array: string[], firstIndex: number, secondIndex: number): string[] => {
+  const switchFunc = (array: string[], firstIndex: number, secondIndex: number) => {
     const temp = array[firstIndex];
     array[firstIndex] = array[secondIndex];
     array[secondIndex] = temp;
-    return array
+    return [...array]
   }
-
-  const reverse = async () => {
-    let start = 0;
-    let end = nextReverse.length - 1;
-    let newOrder = [...nextReverse];
-    while (start < end) {
-      await sleep(1000);
-      newOrder= switchFunc(newOrder, start, end);
-      setWord(newOrder);
-      start++;
-      end--;
-    }
-    setLoader(false);
-  }
-
 
   return (
     <SolutionLayout title="Строка">
