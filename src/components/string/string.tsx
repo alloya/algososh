@@ -58,6 +58,7 @@ export const StringComponent: React.FC = () => {
   }, [loader])
 
   const handleClick = async () => {
+    if (!nextReverse.length) {return}
     setnNextReverse(nextReverse.map(el => ({ char: el.char, style: ElementStates.Default })))
     const elementsArray: TCircle[] = nextReverse.map(el => ({ char: el.char, style: ElementStates.Default }));
     setWord(elementsArray);
