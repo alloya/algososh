@@ -22,19 +22,13 @@ export const SortingPage: React.FC = () => {
   const [array, setArray] = useState<TColumn[]>([]);
 
   const handleClick = async (sortType: Direction) => {
-    sortType === Direction.Ascending ? setAscLoader(true) : setDescLoader(true)
-    if (select) {
-      await selectSort(sortType)
-    }
-    if (bubble) {
-      await bubbleSort(sortType)
-    }
-    //select ? await selectSort(sortType) : await bubbleSort(sortType);
+    sortType === Direction.Ascending ? setAscLoader(true) : setDescLoader(true);
+    select ? await selectSort(sortType) : await bubbleSort(sortType);
     sortType === Direction.Ascending ? setAscLoader(false) : setDescLoader(false);
   }
 
   const generateArray = () => {
-    const len = getRndInteger(3, 7);
+    const len = getRndInteger(3, 17);
     let array = [];
     for (let i = 0; i < len; i++) {
       array.push(getRndInteger(1, 100));
@@ -53,11 +47,11 @@ export const SortingPage: React.FC = () => {
         if (j > 0) { temp[j - 1].style = ElementStates.Default; }
 
         setArray([...temp]);
-        await delay(500)
+        await delay(DELAY)
         if (sortType === Direction.Ascending ? (temp[j].num > temp[j+1].num) : (temp[j].num < temp[j+1].num)) {
           let newA = switchFunc(temp, j, j + 1);
           setArray(newA);
-          await delay(500)
+          await delay(DELAY)
         }
       }
       if (end-1 > 0) {
