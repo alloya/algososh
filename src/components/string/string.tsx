@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ElementStates } from "../../types/element-states";
+import { switchFunc } from "../../utils/utils";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { Input } from "../ui/input/input";
@@ -81,13 +82,6 @@ export const StringComponent: React.FC = () => {
       array[firstIndex].style = ElementStates.Modified;
     }
     return [...newArray]
-  }
-
-  const switchFunc = (array: TCircle[], firstIndex: number, secondIndex: number) => {
-    const temp = array[firstIndex];
-    array[firstIndex] = array[secondIndex];
-    array[secondIndex] = temp;
-    return [...array]
   }
 
   return (
