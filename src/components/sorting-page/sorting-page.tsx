@@ -54,7 +54,7 @@ export const SortingPage: React.FC = () => {
 
         setArray([...temp]);
         await delay(500)
-        if (temp[j].num > temp[j+1].num) {
+        if (sortType === Direction.Ascending ? (temp[j].num > temp[j+1].num) : (temp[j].num < temp[j+1].num)) {
           let newA = switchFunc(temp, j, j + 1);
           setArray(newA);
           await delay(500)
