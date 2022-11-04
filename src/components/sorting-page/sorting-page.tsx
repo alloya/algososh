@@ -21,9 +21,9 @@ export const SortingPage: React.FC = () => {
   const [bubble, setBubble] = useState(false);
   const [array, setArray] = useState<TColumn[]>([]);
 
-  const handleClick = async (sortType: string) => {
+  const handleClick = async (sortType: Direction) => {
     sortType === Direction.Ascending ? setAscLoader(true) : setAscLoader(true)
-    await selectSort("");
+    await selectSort(sortType);
     setAscLoader(false)
   }
 
@@ -39,8 +39,8 @@ export const SortingPage: React.FC = () => {
 
   }
 
-  const selectSort = async (sortType: string) => {
-    let minIndex = 0;
+  const selectSort = async (sortType: Direction) => {
+    let indexToSwitch = 0;
     let start = 0;
     let temp = [...array];
     while (start < array.length) {
@@ -48,47 +48,24 @@ export const SortingPage: React.FC = () => {
         if (i >= 2) {
           temp[i-1].style = ElementStates.Default;
         }
-        temp[minIndex].style = ElementStates.Changing;
+        temp[indexToSwitch].style = ElementStates.Changing;
         temp[i].style = ElementStates.Changing;
-        setArray(temp);
+        setArray([...temp]);
         await delay(DELAY);
-        if (temp[i].num < temp[minIndex].num) {
-          temp[minIndex].style = ElementStates.Default;
-          minIndex = i
+        if (sortType === Direction.Ascending ? (temp[i].num < temp[indexToSwitch].num) :  (temp[i].num > temp[indexToSwitch].num)) {
+          temp[indexToSwitch].style = ElementStates.Default;
+          indexToSwitch = i
         }
       }
-      temp[minIndex].style = ElementStates.Modified;
-      if (minIndex != array.length-1) {
+      temp[indexToSwitch].style = ElementStates.Modified;
+      if (indexToSwitch != array.length-1) {
         temp[array.length-1].style = ElementStates.Default;
       }
-      setArray(switchFunc(temp, minIndex, start));
+      setArray(switchFunc(temp, indexToSwitch, start));
       start++;
-      minIndex = start;
+      indexToSwitch = start;
     }
   }
-
-  const colorElements = (array: TColumn[], color: ElementStates, ...elements: number[]) => {
-    for (let el of elements) {
-      array[el].style = color;
-    }
-    return [...array];
-  }
-
-  // useEffect(() => {
-  //   selectSort("")
-  // }, [ascLoader])
-
-  // useEffect(() => {
-  //   let interval: number | null = null;
-  //   if (descLoader) {
-  //     interval = window.setInterval(() => {
-
-  //     }, 500)
-  //     if (bubble) {
-
-  //     }
-  //   }
-  // }, [descLoader])
 
   return (
     <SolutionLayout title="Сортировка массива">
