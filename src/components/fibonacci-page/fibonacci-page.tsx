@@ -11,6 +11,7 @@ export const FibonacciPage: React.FC = () => {
   const [input, setInput] = useState("");
   const [fibArray, setFibArray] = useState<number[]>([]);
   let fib: number[] = [1, 1];
+  const [justify, setJustify] = useState('center')
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value)
@@ -27,10 +28,14 @@ export const FibonacciPage: React.FC = () => {
       let array: number[] = [];
       fibbonacci();
       interval = window.setInterval(() => {
+        setJustify('center');
         if (fib.length !== 0) {
           let elem = fib.shift()!;
           array.push(elem);
           setFibArray([...array]);
+        }
+        if (array.length > 10) {
+          setJustify('start');
         }
         if (fib.length === 0) {
           setLoader(false);
@@ -38,6 +43,7 @@ export const FibonacciPage: React.FC = () => {
         }
       }, 500)
     }
+
     return function cleanup() {
       interval && clearInterval(interval)
     }
@@ -63,7 +69,7 @@ export const FibonacciPage: React.FC = () => {
         <Button text={"Рассчитать"} onClick={handleClick} isLoader={loader} />
 
       </div>
-      <div className={`d-flex justify-content-center col-md-8 m-auto flex-wrap`}>
+      <div className={`d-flex justify-content-${justify} col-md-8 m-auto flex-wrap`}>
         {fibArray && fibArray.map((el, index) =>
           <Circle letter={String(el)} key={index} index={index} extraClass={"pr-6 pt-5 mt-4 mr-auto"} />)}
       </div>
