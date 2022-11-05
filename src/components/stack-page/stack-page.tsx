@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { TCircle } from "../../types/circle";
 import { ElementStates } from "../../types/element-states";
 import { delay } from "../../utils/utils";
@@ -12,7 +12,7 @@ const DELAY = 500;
 export const StackPage: React.FC = () => {
   const [stack, setStack] = useState<TCircle[]>([]);
   const [input, setInput] = useState("");
-  const ref = useRef<HTMLInputElement>(null);
+  const [loader, setLoader] = useState(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value)
@@ -20,22 +20,26 @@ export const StackPage: React.FC = () => {
 
   const addToStack = async () => {
     if (input.length) {
+      setLoader(true);
       const el: TCircle = { char: input, style: ElementStates.Changing };
       setStack([...stack, el]);
       setInput("");
       await delay(DELAY);
       el.style = ElementStates.Default;
       setStack([...stack, el]);
+      setLoader(false);
     }
   }
 
   const removeFromStack = async () => {
+    setLoader(true);
     const el: TCircle = stack[stack.length - 1];
     el.style = ElementStates.Changing;
     setStack([...stack]);
     await delay(DELAY);
     stack.pop();
     setStack([...stack]);
+    setLoader(false);
   }
 
   const clearStack = () => {
@@ -61,15 +65,18 @@ export const StackPage: React.FC = () => {
           <Button
             text={"Добавить"}
             extraClass={'mr-6'}
-            onClick={addToStack} />
+            onClick={addToStack} 
+            disabled={loader}/>
           <Button
             text={"Удалить"}
             extraClass={'mr-6'}
-            onClick={removeFromStack} />
+            onClick={removeFromStack}
+            disabled={loader} />
         </div>
         <Button
           text={"Очистить"}
-          onClick={clearStack} /></div>
+          onClick={clearStack}
+          disabled={loader} /></div>
       <div className={`d-flex justify-content-center col-md-8 m-auto flex-wrap`}>
         {stack && stack.map((el, index) =>
           <Circle
