@@ -13,6 +13,7 @@ export const StackPage: React.FC = () => {
   const [stack, setStack] = useState<TCircle[]>([]);
   const [input, setInput] = useState("");
   const [loader, setLoader] = useState(false);
+  const [deleteLoader, setDeleteLoader] = useState(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value)
@@ -32,14 +33,14 @@ export const StackPage: React.FC = () => {
   }
 
   const removeFromStack = async () => {
-    setLoader(true);
+    setDeleteLoader(true);
     const el: TCircle = stack[stack.length - 1];
     el.style = ElementStates.Changing;
     setStack([...stack]);
     await delay(DELAY);
     stack.pop();
     setStack([...stack]);
-    setLoader(false);
+    setDeleteLoader(false);
   }
 
   const clearStack = () => {
@@ -66,17 +67,19 @@ export const StackPage: React.FC = () => {
             text={"Добавить"}
             extraClass={'mr-6'}
             onClick={addToStack} 
-            disabled={loader}/>
+            isLoader={loader}
+            disabled={deleteLoader} />
           <Button
             text={"Удалить"}
             extraClass={'mr-6'}
             onClick={removeFromStack}
+            isLoader={deleteLoader}
             disabled={loader} />
         </div>
         <Button
           text={"Очистить"}
           onClick={clearStack}
-          disabled={loader} /></div>
+          disabled={loader || deleteLoader} /></div>
       <div className={`d-flex justify-content-center col-md-8 m-auto flex-wrap`}>
         {stack && stack.map((el, index) =>
           <Circle

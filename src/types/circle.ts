@@ -1,6 +1,6 @@
 import { ElementStates } from "./element-states"
 
 export type TCircle = {
-  char: string,
+  char?: string,
   style: ElementStates
 }
