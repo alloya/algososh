@@ -125,7 +125,7 @@ export const SortingPage: React.FC = () => {
           onClick={generateArray}
           disabled={ascLoader || descLoader} />
       </div>
-      <div className="d-flex justify-content-center align-items-end">
+      <div className={`${s.graph} d-flex justify-content-center align-items-end`}>
         {array && array.map((el, index) => {
           return <Column index={el.num} key={index} extraClass={"pr-5"} state={el.style} />
         })}
