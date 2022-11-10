@@ -8,7 +8,6 @@ import { ArrowIcon } from "../ui/icons/arrow-icon";
 import { Input } from "../ui/input/input";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 
-
 const DELAY = 500;
 const defaultLoaders = {
   "addHeadLoader": false,
@@ -44,10 +43,6 @@ export const ListPage: React.FC = () => {
     setQueue(array);
   }, []);
 
-  useEffect(() => {
-    
-  })
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value)
   }
@@ -56,49 +51,37 @@ export const ListPage: React.FC = () => {
     setIndexInput(event.target.value)
   }
 
-  const colorList = async (index: number) => {
+  const colorList = async (index: number, type: string) => {
     setLoaders({ ...defaultLoaders, "addIndexLoader": true })
     let headIndex = head;
     while (headIndex <= index) {
       setMovingIndex(headIndex);
       queue[headIndex].style = ElementStates.Changing;
       setColor(changingColor);
-      setHeadObject({...headObject, char: queue[headIndex].char, index: headIndex })
+      if (type === "add") {
+        setHeadObject({...headObject, char: queue[headIndex].char, index: headIndex });
+      }
       setQueue([...queue]);
       await delay(DELAY);
       headIndex++;
     }
-    const newList = [...queue];
-    newList.splice(headIndex-1, 0, {char: input, style: ElementStates.Modified});
-    setQueue([...newList]);
-    setMovingIndex(0);
-    setHeadObject({ ...headObject, char: "", index: -1 });
-    setTail(tail + 1);
-    await delay(DELAY);
-    newList.map(el => el.style = ElementStates.Default);
-    setQueue([...newList]);
-    setLoaders({ ...defaultLoaders });
-  }
-
-  const colorListDelete = async (index: number) => {
-    setLoaders({ ...defaultLoaders, "removeIndexLoader": true })
-    let headIndex = head;
-    while (headIndex <= index) {
-      setMovingIndex(headIndex);
-      queue[headIndex].style = ElementStates.Changing;
-      setColor(changingColor);
+    if (type === "delete") {
+      setTailObject({...tailObject, char: queue[index].char, index: index});
+      queue[index].char = '';
       setQueue([...queue]);
       await delay(DELAY);
-      headIndex++;
     }
-    setTailObject({...tailObject, char: queue[index].char, index: index});
-    queue[index].char = '';
-    setQueue([...queue]);
-    await delay(DELAY);
     const newList = [...queue];
-    newList.splice(index, 1);
-    setTailObject({...tailObject, char: "", index: -1});
-    setTail(tail - 1);
+    if (type === "add") {
+      newList.splice(headIndex-1, 0, {char: input, style: ElementStates.Modified});
+      setHeadObject({ ...headObject, char: "", index: -1 });
+      setTail(tail + 1);
+    }
+    if (type === "delete") {
+      newList.splice(index, 1);
+      setTailObject({...tailObject, char: "", index: -1});
+      setTail(tail - 1);
+    }
     setQueue([...newList]);
     setMovingIndex(0);
     await delay(DELAY);
@@ -202,13 +185,13 @@ export const ListPage: React.FC = () => {
         <Button
           extraClass={"col mx-3"}
           text={"Добавить по индексу"}
-          onClick={() => colorList(Number(indexInput))}
+          onClick={() => colorList(Number(indexInput), "add")}
           isLoader={loaders.addIndexLoader}
           disabled={false} />
         <Button
           text={"Удалить по индексу"}
           extraClass={'col'}
-          onClick={() => colorListDelete(Number(indexInput))}
+          onClick={() => colorList(Number(indexInput), "delete")}
           isLoader={loaders.removeIndexLoader}
           disabled={false} />
       </div>
