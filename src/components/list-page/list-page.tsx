@@ -20,6 +20,7 @@ const defaultLoaders = {
 
 const changingColor = "#d252e1";
 const defaultColor = "#0032ff";
+let disabled = false;
 
 type TCircleIndex = TCircle & { index: number };
 
@@ -52,7 +53,8 @@ export const ListPage: React.FC = () => {
   }
 
   const colorList = async (index: number, type: string) => {
-    setLoaders({ ...defaultLoaders, "addIndexLoader": true })
+    setLoaders({ ...defaultLoaders, "addIndexLoader": true });
+    disabled = true;
     let headIndex = head;
     while (headIndex <= index) {
       setMovingIndex(headIndex);
@@ -87,6 +89,7 @@ export const ListPage: React.FC = () => {
     await delay(DELAY);
     newList.map(el => el.style = ElementStates.Default);
     setQueue([...newList]);
+    disabled = false;
     setLoaders({ ...defaultLoaders });
   }
 
@@ -95,6 +98,7 @@ export const ListPage: React.FC = () => {
       index === head
         ? setLoaders({ ...defaultLoaders, "addHeadLoader": true })
         : setLoaders({ ...defaultLoaders, "addTailLoader": true });
+      disabled = true;
       setHeadObject({ ...headObject, char: input, index: index });
       await delay(DELAY);
       setHeadObject({ ...headObject, char: "", index: -1 });
@@ -107,6 +111,7 @@ export const ListPage: React.FC = () => {
       setInput("");
       queue[index === head ? index : index + 1].style = ElementStates.Default;
       setQueue([...queue]);
+      disabled = false;
       setLoaders({ ...defaultLoaders });
     }
   }
@@ -115,6 +120,7 @@ export const ListPage: React.FC = () => {
     index === head
       ? setLoaders({ ...defaultLoaders, "removeHeadLoader": true })
       : setLoaders({ ...defaultLoaders, "removeTailLoader": true });
+    disabled = true;
     setTailObject({ ...tailObject, char: queue[index].char, index: index });
     queue[index].char = "";
     setQueue([...queue]);
@@ -124,6 +130,7 @@ export const ListPage: React.FC = () => {
     setTail(tail - 1);
     setQueue([...queue]);
     await delay(DELAY);
+    disabled = false;
     setLoaders({ ...defaultLoaders });
   }
 
@@ -156,23 +163,23 @@ export const ListPage: React.FC = () => {
           text={"Добавить в head"}
           onClick={() => directAdd(head)}
           isLoader={loaders.addHeadLoader}
-          disabled={false} />
+          disabled={disabled} />
         <Button
           text={"Добавить в tail"}
           onClick={() => directAdd(tail)}
           isLoader={loaders.addTailLoader}
-          disabled={false} />
+          disabled={disabled} />
         <Button
           text={"Удалить из head"}
           onClick={() => directRemove(head)}
           isLoader={loaders.removeHeadLoader}
-          disabled={false} />
+          disabled={disabled} />
         <Button
           text={"Удалить из tail"}
           extraClass={''}
           onClick={() => directRemove(tail)}
           isLoader={loaders.removeTailLoader}
-          disabled={false} />
+          disabled={disabled} />
       </div>
       <div className={'justify-content-between col-md-8 d-flex m-auto mb-5 pb-5'}>
         <Input
@@ -187,13 +194,13 @@ export const ListPage: React.FC = () => {
           text={"Добавить по индексу"}
           onClick={() => colorList(Number(indexInput), "add")}
           isLoader={loaders.addIndexLoader}
-          disabled={false} />
+          disabled={disabled} />
         <Button
           text={"Удалить по индексу"}
           extraClass={'col'}
           onClick={() => colorList(Number(indexInput), "delete")}
           isLoader={loaders.removeIndexLoader}
-          disabled={false} />
+          disabled={disabled} />
       </div>
       <div className={`d-flex justify-content-center col-md-10 m-auto flex-wrap`}>
         {queue && queue.map((el, index) =>

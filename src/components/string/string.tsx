@@ -20,7 +20,7 @@ export const StringComponent: React.FC = () => {
 
   useEffect(() => {
     setnNextReverse(input.split("").map(el => ({ char: el, style: ElementStates.Default })));
-  }, [input])
+  }, [input]);
 
   useEffect(() => {
     let interval: number | null = null;
