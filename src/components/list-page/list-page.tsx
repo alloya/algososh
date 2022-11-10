@@ -57,6 +57,7 @@ export const ListPage: React.FC = () => {
   }
 
   const colorList = async (index: number) => {
+    setLoaders({ ...defaultLoaders, "addIndexLoader": true })
     let headIndex = head;
     while (headIndex <= index) {
       setMovingIndex(headIndex);
@@ -68,7 +69,7 @@ export const ListPage: React.FC = () => {
       headIndex++;
     }
     const newList = [...queue];
-    newList.splice(headIndex, 0, {char: input, style: ElementStates.Modified});
+    newList.splice(headIndex-1, 0, {char: input, style: ElementStates.Modified});
     setQueue([...newList]);
     setMovingIndex(0);
     setHeadObject({ ...headObject, char: "", index: -1 });
@@ -76,6 +77,34 @@ export const ListPage: React.FC = () => {
     await delay(DELAY);
     newList.map(el => el.style = ElementStates.Default);
     setQueue([...newList]);
+    setLoaders({ ...defaultLoaders });
+  }
+
+  const colorListDelete = async (index: number) => {
+    setLoaders({ ...defaultLoaders, "removeIndexLoader": true })
+    let headIndex = head;
+    while (headIndex <= index) {
+      setMovingIndex(headIndex);
+      queue[headIndex].style = ElementStates.Changing;
+      setColor(changingColor);
+      setQueue([...queue]);
+      await delay(DELAY);
+      headIndex++;
+    }
+    setTailObject({...tailObject, char: queue[index].char, index: index});
+    queue[index].char = '';
+    setQueue([...queue]);
+    await delay(DELAY);
+    const newList = [...queue];
+    newList.splice(index, 1);
+    setTailObject({...tailObject, char: "", index: -1});
+    setTail(tail - 1);
+    setQueue([...newList]);
+    setMovingIndex(0);
+    await delay(DELAY);
+    newList.map(el => el.style = ElementStates.Default);
+    setQueue([...newList]);
+    setLoaders({ ...defaultLoaders });
   }
 
   const directAdd = async (index: number) => {
@@ -93,7 +122,7 @@ export const ListPage: React.FC = () => {
       setQueue([...queue]);
       await delay(DELAY);
       setInput("");
-      queue[index].style = ElementStates.Default;
+      queue[index === head ? index : index + 1].style = ElementStates.Default;
       setQueue([...queue]);
       setLoaders({ ...defaultLoaders });
     }
@@ -130,7 +159,7 @@ export const ListPage: React.FC = () => {
   }
 
   return (
-    <SolutionLayout title="Очередь">
+    <SolutionLayout title="Связанный список">
       <div className={'justify-content-between col-md-8 d-flex m-auto mb-3'}>
         <Input
           maxLength={4}
@@ -179,11 +208,11 @@ export const ListPage: React.FC = () => {
         <Button
           text={"Удалить по индексу"}
           extraClass={'col'}
-          //onClick={removeFromQueue}
+          onClick={() => colorListDelete(Number(indexInput))}
           isLoader={loaders.removeIndexLoader}
           disabled={false} />
       </div>
-      <div className={`d-flex justify-content-center col-md-8 m-auto flex-wrap`}>
+      <div className={`d-flex justify-content-center col-md-10 m-auto flex-wrap`}>
         {queue && queue.map((el, index) =>
           <div key={index} className='d-flex align-items-center'>
             <Circle
