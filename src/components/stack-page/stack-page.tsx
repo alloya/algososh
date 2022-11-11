@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Stack } from "../../classes/stack";
 import { TCircle } from "../../types/circle";
 import { ElementStates } from "../../types/element-states";
 import { delay } from "../../utils/utils";
@@ -10,7 +11,7 @@ import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 const DELAY = 500;
 
 export const StackPage: React.FC = () => {
-  const [stack, setStack] = useState<TCircle[]>([]);
+  const [stack, setStack] = useState(new Stack<TCircle>())
   const [input, setInput] = useState("");
   const [loader, setLoader] = useState(false);
   const [deleteLoader, setDeleteLoader] = useState(false);
@@ -23,32 +24,39 @@ export const StackPage: React.FC = () => {
     if (input.length) {
       setLoader(true);
       const el: TCircle = { char: input, style: ElementStates.Changing };
-      setStack([...stack, el]);
+      const updatedStack = stack.clone();
+      updatedStack.push(el);
+      setStack(updatedStack);
       setInput("");
       await delay(DELAY);
       el.style = ElementStates.Default;
-      setStack([...stack, el]);
+      setStack(updatedStack.clone());
       setLoader(false);
     }
   }
 
   const removeFromStack = async () => {
     setDeleteLoader(true);
-    const el: TCircle = stack[stack.length - 1];
-    el.style = ElementStates.Changing;
-    setStack([...stack]);
+    const updatedStack = stack.clone();
+    let el = updatedStack.peak();
+    if (el) {
+      el.style = ElementStates.Changing;
+    }
+    setStack(updatedStack);
     await delay(DELAY);
-    stack.pop();
-    setStack([...stack]);
+    updatedStack.pop();
+    setStack(updatedStack.clone());
     setDeleteLoader(false);
   }
 
   const clearStack = () => {
-    setStack([]);
+    const updatedStack = stack.clone();
+    updatedStack.clear()
+    setStack(updatedStack);
   }
 
   const isTail = (index: number): string | null => {
-    return index === stack.length - 1 ? "top" : null
+    return index === stack.getSize() - 1 ? "top" : null
   }
 
   return (
@@ -81,7 +89,7 @@ export const StackPage: React.FC = () => {
           onClick={clearStack}
           disabled={loader || deleteLoader} /></div>
       <div className={`d-flex justify-content-center col-md-8 m-auto flex-wrap`}>
-        {stack && stack.map((el, index) =>
+        {stack.elements()?.map((el, index) =>
           <Circle
             letter={el.char}
             state={el.style}
