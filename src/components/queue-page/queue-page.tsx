@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Queue } from "../../classes/queue";
 import { TCircle } from "../../types/circle";
 import { ElementStates } from "../../types/element-states";
 import { delay } from "../../utils/utils";
@@ -8,70 +9,63 @@ import { Input } from "../ui/input/input";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 
 const DELAY = 500;
-
+const QUEUE_LENGTH = 8;
 
 export const QueuePage: React.FC = () => {
-  const [queue, setQueue] = useState<TCircle[]>([{ style: ElementStates.Default }]);
+  const [queue, setQueue] = useState(new Queue<TCircle>(QUEUE_LENGTH));
+  const [queueEl, setQueueEl] = useState<(TCircle | null)[]>();
   const [input, setInput] = useState("");
   const [loader, setLoader] = useState(false);
   const [deleteLoader, setDeleteLoader] = useState(false);
-  const [tail, setTail] = useState(-1);
-  const [head, setHead] = useState(0);
 
   useEffect(() => {
-    clearQueue()
+    setQueueEl(queue.elements());
   }, [])
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value)
   }
 
+  const getCircle = (char: string, style: ElementStates): TCircle => {
+    return { char: char, style: style };
+  }
+
   const addToQueue = async () => {
-    if (input.length && tail < queue.length - 1) {
-      setLoader(true);
-      queue[tail + 1].style = ElementStates.Changing;
-      setQueue([...queue]);
-      await delay(DELAY);
-      queue[tail + 1].char = input;
-      setInput("");
-      queue[tail + 1].style = ElementStates.Default;
-      setQueue([...queue]);
-      setLoader(false);
-      setTail(tail + 1);
-    }
+    if (!input.length) { return };
+    setLoader(true);
+    const el = getCircle(input, ElementStates.Changing);
+    queue.enqueue(el);
+    setQueueEl(queue.elements());
+    await delay(DELAY);
+    setInput("");
+    el!.style = ElementStates.Default;
+    setQueueEl([...queue.elements()]);
+    setLoader(false);
   }
 
   const removeFromQueue = async () => {
-    if (head < queue.length) {
       setDeleteLoader(true);
-      queue[head].style = ElementStates.Changing;
-      setQueue([...queue]);
+      const el = queue.peak();
+      el!.style = ElementStates.Changing;
+      setQueueEl([...queue.elements()]);
       await delay(DELAY);
-      queue[head].char = "";
-      queue[head].style = ElementStates.Default;
-      setQueue([...queue]);
-      setHead(head + 1);
+      queue.dequeue();
+      setQueueEl([...queue.elements()]);
       setDeleteLoader(false);
-    }
   }
 
   const clearQueue = () => {
-    let array: TCircle[] = [];
-    for (let i = 0; i < 7; i++) {
-      array.push({ style: ElementStates.Default })
-    }
-    setQueue(array);
-    setTail(-1);
-    setHead(0);
-    setInput("");
+    setQueue(new Queue(8));
+    const clear = queueEl?.map(el => el = null)
+    setQueueEl(clear);
   }
 
   const isTail = (index: number): string | null => {
-    return index === tail ? "tail" : null
+    return !queue.isEmpty() && queue.isTail(index + 1) ? "tail" : null
   }
 
   const isHead = (index: number): string | null => {
-    return (queue[index].char?.length && index === head) ? "head" : null
+    return !queue.isEmpty() && queue.isHead(index) ? "head" : null
   }
 
   return (
@@ -91,23 +85,23 @@ export const QueuePage: React.FC = () => {
             extraClass={'mr-6'}
             onClick={addToQueue}
             isLoader={loader}
-            disabled={deleteLoader || (tail === queue.length - 1)} />
+            disabled={deleteLoader || queue.isFull()} />
           <Button
             text={"Удалить"}
             extraClass={'mr-6'}
             onClick={removeFromQueue}
             isLoader={deleteLoader}
-            disabled={loader || (head === queue.length)} />
+            disabled={loader || queue.isEmpty()} />
         </div>
         <Button
           text={"Очистить"}
           onClick={clearQueue}
           disabled={loader || deleteLoader} /></div>
       <div className={`d-flex justify-content-center col-md-8 m-auto flex-wrap`}>
-        {queue && queue.map((el, index) =>
+        {queueEl?.map((el, index) =>
           <Circle
-            letter={el.char}
-            state={el.style}
+            letter={el?.char}
+            state={el?.style}
             key={index}
             index={index}
             extraClass={"pr-6 mr-auto"}
