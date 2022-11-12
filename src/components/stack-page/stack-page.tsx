@@ -36,6 +36,9 @@ export const StackPage: React.FC = () => {
   }
 
   const removeFromStack = async () => {
+    if (!stack.getSize()) {
+      return
+    }
     setDeleteLoader(true);
     const updatedStack = stack.clone();
     let el = updatedStack.peak();
@@ -70,11 +73,11 @@ export const StackPage: React.FC = () => {
             placeholder={"Введите текст"}
             type={"text"}
             onChange={handleChange}
-            value={input}/>
+            value={input} />
           <Button
             text={"Добавить"}
             extraClass={'mr-6'}
-            onClick={addToStack} 
+            onClick={addToStack}
             isLoader={loader}
             disabled={deleteLoader} />
           <Button
