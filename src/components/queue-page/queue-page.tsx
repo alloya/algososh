@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Queue } from "../../classes/queue";
 import { TCircle } from "../../types/circle";
 import { ElementStates } from "../../types/element-states";
-import { delay } from "../../utils/utils";
+import { delay, getCircle } from "../../utils/utils";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { Input } from "../ui/input/input";
@@ -24,10 +24,6 @@ export const QueuePage: React.FC = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value)
-  }
-
-  const getCircle = (char: string, style: ElementStates): TCircle => {
-    return { char: char, style: style };
   }
 
   const addToQueue = async () => {

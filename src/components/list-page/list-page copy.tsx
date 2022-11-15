@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LinkedList } from "../../classes/list";
 import { TCircle } from "../../types/circle";
 import { ElementStates } from "../../types/element-states";
-import { delay, getCircle, getRandomCircleArray } from "../../utils/utils";
+import { delay, getRndInteger } from "../../utils/utils";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { ArrowIcon } from "../ui/icons/arrow-icon";
@@ -26,15 +26,25 @@ let disabled = false;
 type TCircleIndex = TCircle & { index: number };
 
 export const ListPage: React.FC = () => {
-  const [linkedList, setLinkedList] = useState<LinkedList<TCircle>>(new LinkedList(getRandomCircleArray()));
-  const [list, setList] = useState<TCircle[]>(linkedList.getElements());
+  const [list, setList] = useState<LinkedList<TCircle>>();
+  const head = 0;
+  const [queue, setQueue] = useState<TCircle[]>([{ style: ElementStates.Default }]);
   const [input, setInput] = useState("");
   const [indexInput, setIndexInput] = useState("");
+  const [tail, setTail] = useState(4);
   const [loaders, setLoaders] = useState(defaultLoaders);
   const [tailObject, setTailObject] = useState<TCircleIndex>({ char: "", style: ElementStates.Changing, index: -1 });
   const [headObject, setHeadObject] = useState<TCircleIndex>({ char: "", style: ElementStates.Changing, index: -1 });
   const [color, setColor] = useState(defaultColor);
-  const [movingIndex, setMovingIndex] = useState(0);
+  const [movingIndex, setMovingIndex] = useState(0); 
+
+  useEffect(() => {
+    let array: TCircle[] = [];
+    for (let i = 0; i < 5; i++) {
+      array.push({ char: getRndInteger(0, 100).toString(), style: ElementStates.Default })
+    }
+    setQueue(array);
+  }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value)
@@ -45,80 +55,83 @@ export const ListPage: React.FC = () => {
   }
 
   const colorList = async (index: number, type: string) => {
-    type === "add"
-     ? setLoaders({ ...defaultLoaders, "addIndexLoader": true })
-     : setLoaders({ ...defaultLoaders, "removeIndexLoader": true });
+    setLoaders({ ...defaultLoaders, "addIndexLoader": true });
     disabled = true;
-    let headIndex = 0;
+    let headIndex = head;
     while (headIndex <= index) {
       setMovingIndex(headIndex);
-      list[headIndex].style = ElementStates.Changing;
+      queue[headIndex].style = ElementStates.Changing;
       setColor(changingColor);
       if (type === "add") {
-        setHeadObject({ ...headObject, char: input, index: headIndex });
+        setHeadObject({...headObject, char: queue[headIndex].char, index: headIndex });
       }
-      setList([...list]);
+      setQueue([...queue]);
       await delay(DELAY);
       headIndex++;
     }
     if (type === "delete") {
-      setTailObject({ ...tailObject, char: list[index].char, index: index });
-      list[index].char = '';
-      setList([...list]);
+      setTailObject({...tailObject, char: queue[index].char, index: index});
+      queue[index].char = '';
+      setQueue([...queue]);
       await delay(DELAY);
     }
+    const newList = [...queue];
     if (type === "add") {
-      linkedList.addByIndex({ char: input, style: ElementStates.Modified }, index);
+      newList.splice(headIndex-1, 0, {char: input, style: ElementStates.Modified});
       setHeadObject({ ...headObject, char: "", index: -1 });
+      setTail(tail + 1);
     }
     if (type === "delete") {
-      linkedList.deleteByIndex(index);
-      setTailObject({ ...tailObject, char: "", index: -1 });
+      newList.splice(index, 1);
+      setTailObject({...tailObject, char: "", index: -1});
+      setTail(tail - 1);
     }
-    setList(linkedList.getElements());
+    setQueue([...newList]);
     setMovingIndex(0);
     await delay(DELAY);
-    linkedList.getElements().map(el => el.style = ElementStates.Default);
-    setList([...linkedList.getElements()]);
-    setInput('');
-    setIndexInput('');
+    newList.map(el => el.style = ElementStates.Default);
+    setQueue([...newList]);
     disabled = false;
     setLoaders({ ...defaultLoaders });
   }
 
-  const directRemove = async (type: string) => {
-    type === 'head'
+  const directAdd = async (index: number) => {
+    if (input.length) {
+      index === head
+        ? setLoaders({ ...defaultLoaders, "addHeadLoader": true })
+        : setLoaders({ ...defaultLoaders, "addTailLoader": true });
+      disabled = true;
+      setHeadObject({ ...headObject, char: input, index: index });
+      await delay(DELAY);
+      setHeadObject({ ...headObject, char: "", index: -1 });
+      index === head
+        ? queue.unshift({ char: input, style: ElementStates.Modified })
+        : queue.push({ char: input, style: ElementStates.Modified });
+      setTail(tail + 1);
+      setQueue([...queue]);
+      await delay(DELAY);
+      setInput("");
+      queue[index === head ? index : index + 1].style = ElementStates.Default;
+      setQueue([...queue]);
+      disabled = false;
+      setLoaders({ ...defaultLoaders });
+    }
+  }
+
+  const directRemove = async (index: number) => {
+    index === head
       ? setLoaders({ ...defaultLoaders, "removeHeadLoader": true })
       : setLoaders({ ...defaultLoaders, "removeTailLoader": true });
-    const index = type === 'head' ? 0 : linkedList.getSize() - 1;
     disabled = true;
-    setTailObject({ ...tailObject, char: list[index].char, index: index });
-    list[index].char = "";
+    setTailObject({ ...tailObject, char: queue[index].char, index: index });
+    queue[index].char = "";
+    setQueue([...queue]);
     await delay(DELAY);
     setTailObject({ ...tailObject, char: "", index: -1 });
-    index === 0 ? linkedList.deleteHead() : linkedList.deleteTail();
-    setList([...linkedList.getElements()]);
+    index === 0 ? queue.shift() : queue.pop();
+    setTail(tail - 1);
+    setQueue([...queue]);
     await delay(DELAY);
-    disabled = false;
-    setLoaders({ ...defaultLoaders });
-  }
-
-  const directAdd = async (type: string) => {
-    if (!input.length) { return };
-    type === 'head'
-      ? setLoaders({ ...defaultLoaders, "addHeadLoader": true })
-      : setLoaders({ ...defaultLoaders, "addTailLoader": true });
-    disabled = true;
-    setHeadObject({ ...headObject, char: input, index: type === 'head' ? 0 : linkedList.getSize() - 1 });
-    await delay(DELAY);
-    setHeadObject({ ...headObject, char: "", index: -1 });
-    const el = getCircle(input, ElementStates.Modified);
-    type === 'head' ? linkedList.prepend(el) : linkedList.append(el);
-    setList(linkedList.getElements());
-    await delay(DELAY);
-    setInput("");
-    el.style = ElementStates.Default;
-    setList([...linkedList.getElements()]);
     disabled = false;
     setLoaders({ ...defaultLoaders });
   }
@@ -127,14 +140,14 @@ export const ListPage: React.FC = () => {
     if (tailObject.index >= 0 && index === tailObject.index) {
       return <Circle state={ElementStates.Changing} letter={tailObject.char} isSmall={true} />
     }
-    return index === linkedList.getSize() - 1 ? "tail" : null
+    return index === tail ? "tail" : null
   }
 
   const isHead = (index: number): string | null | React.ReactElement => {
     if (headObject.index >= 0 && index === headObject.index) {
       return <Circle state={ElementStates.Changing} letter={input} isSmall={true} />
     }
-    return (list[index].char?.length && index === 0) ? "head" : null
+    return (queue[index].char?.length && index === head) ? "head" : null
   }
 
   return (
@@ -150,23 +163,23 @@ export const ListPage: React.FC = () => {
           value={input} />
         <Button
           text={"Добавить в head"}
-          onClick={() => directAdd('head')}
+          onClick={() => directAdd(head)}
           isLoader={loaders.addHeadLoader}
           disabled={disabled} />
         <Button
           text={"Добавить в tail"}
-          onClick={() => directAdd('tail')}
+          onClick={() => directAdd(tail)}
           isLoader={loaders.addTailLoader}
           disabled={disabled} />
         <Button
           text={"Удалить из head"}
-          onClick={() => directRemove('head')}
+          onClick={() => directRemove(head)}
           isLoader={loaders.removeHeadLoader}
           disabled={disabled} />
         <Button
           text={"Удалить из tail"}
           extraClass={''}
-          onClick={() => directRemove('tail')}
+          onClick={() => directRemove(tail)}
           isLoader={loaders.removeTailLoader}
           disabled={disabled} />
       </div>
@@ -176,8 +189,8 @@ export const ListPage: React.FC = () => {
           placeholder={"Введите индекс"}
           type={"number"}
           onChange={handleIndexChange}
-          value={indexInput}
-          max={list.length - 1} />
+          value={indexInput} 
+          max={queue.length - 1}/>
         <Button
           extraClass={"col mx-3"}
           text={"Добавить по индексу"}
@@ -192,7 +205,7 @@ export const ListPage: React.FC = () => {
           disabled={disabled} />
       </div>
       <div className={`d-flex justify-content-center col-md-10 m-auto flex-wrap`}>
-        {list && list.map((el, index) =>
+        {queue && queue.map((el, index) =>
           <div key={index} className='d-flex align-items-center'>
             <Circle
               letter={el.char}
@@ -200,11 +213,9 @@ export const ListPage: React.FC = () => {
               index={index}
               extraClass={"p-6 mr-auto"}
               head={isHead(index)}
-              tail={isTail(index)}
-            />
-            {(index !== list.length - 1) && <ArrowIcon fill={index < movingIndex ? color : defaultColor} />}
-          </div>)
-        }
+              tail={isTail(index)} />
+            {(index !== queue.length - 1) && <ArrowIcon fill={index < movingIndex ? color : defaultColor}/>}
+          </div>)}
       </div>
     </SolutionLayout>
   );
