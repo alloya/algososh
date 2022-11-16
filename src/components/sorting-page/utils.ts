@@ -1,5 +1,5 @@
 import { Direction } from "../../types/direction"
-import { switchFunc } from "../../utils/utils";
+import { switchElements } from "../../utils/utils";
 
 export type TColoring = {
   numArray: number[],
@@ -16,7 +16,7 @@ export const selectSortIteration = ({ numArray, firstIndex: minIndex, secondInde
   }
   comparingIndex++;
   if (comparingIndex >= numArray.length) {
-    numArray = switchFunc(numArray, lastSortedIndex !== null ? lastSortedIndex + 1 : 0, minIndex);
+    numArray = switchElements(numArray, lastSortedIndex !== null ? lastSortedIndex + 1 : 0, minIndex);
     lastSortedIndex !== null ? lastSortedIndex++ : lastSortedIndex = 0;
     minIndex = lastSortedIndex + 1;
     comparingIndex = minIndex + 1;
@@ -28,7 +28,7 @@ export const bubbleSortIteration = ({numArray, firstIndex, secondIndex, sortedIn
   if ((sortingType === Direction.Ascending)
     ? numArray[firstIndex] > numArray[secondIndex]
     : numArray[firstIndex] < numArray[secondIndex]) {
-      switchFunc(numArray, firstIndex, secondIndex);
+      switchElements(numArray, firstIndex, secondIndex);
   }
   firstIndex++
   secondIndex++;

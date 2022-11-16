@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { Direction } from "../../types/direction";
 import { ElementStates } from "../../types/element-states";
-import { delay, getRndInteger, switchFunc } from "../../utils/utils";
+import { delay, getRndInteger, switchElements } from "../../utils/utils";
 import { Button } from "../ui/button/button";
 import { Column } from "../ui/column/column";
 import { RadioInput } from "../ui/radio-input/radio-input";
@@ -78,7 +78,7 @@ export const SortingPage: React.FC = () => {
         setArray([...temp]);
         await delay(SHORT_DELAY_IN_MS)
         if (sortType === Direction.Ascending ? (temp[j].num > temp[j+1].num) : (temp[j].num < temp[j+1].num)) {
-          let newA = switchFunc(temp, j, j + 1);
+          let newA = switchElements(temp, j, j + 1);
           setArray(newA);
           await delay(SHORT_DELAY_IN_MS)
         }

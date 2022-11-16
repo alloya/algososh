@@ -1,4 +1,4 @@
-import { Node } from "./node";
+import { Node } from "../../classes/node";
 
 interface IStack<T> {
   push: (item: T) => void;

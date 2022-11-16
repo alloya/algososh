@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Queue } from "../../classes/queue";
+import { Queue } from "./queue";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { TCircle } from "../../types/circle";
 import { ElementStates } from "../../types/element-states";

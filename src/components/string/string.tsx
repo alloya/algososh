@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TCircle } from "../../types/circle";
 import { ElementStates } from "../../types/element-states";
-import { switchFunc } from "../../utils/utils";
+import { switchFunc } from "./utils";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { Input } from "../ui/input/input";

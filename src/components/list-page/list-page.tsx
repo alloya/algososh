@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { LinkedList } from "../../classes/list";
+import { LinkedList } from "./list";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { TCircle } from "../../types/circle";
 import { ElementStates } from "../../types/element-states";

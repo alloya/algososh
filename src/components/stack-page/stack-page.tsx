@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Stack } from "../../classes/stack";
+import { Stack } from "./stack";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { TCircle } from "../../types/circle";
 import { ElementStates } from "../../types/element-states";
