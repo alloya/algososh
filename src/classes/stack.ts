@@ -1,45 +1,66 @@
+import { Node } from "./node";
+
 interface IStack<T> {
   push: (item: T) => void;
   pop: () => void;
   peak: () => T | null;
   getSize: () => number;
+  clear: () => void;
+  getElements: () => void;
+  isEmpty: () => void;
 }
 
 export class Stack<T> implements IStack<T> {
-  private container: T[] = [];
+  private top: Node<T> | null = null;
+  private size: number;
 
-  constructor(container: T[] = []) {
-    this.container = container;
-  }
-
-  clone(): Stack<T> {
-    return new Stack(this.container);
+  constructor(node: Node<T> | null) {
+    this.top = node;
+    this.size = 0;
   }
 
   push = (item: T): void => {
-    this.container.push(item)
+   let node = new Node(item, this.top)
+   this.top = node;
+   this.size++;
   };
 
   pop = (): void => {
-    if (this.container.length) {
-      this.container.pop();
+    if (this.isEmpty()) {
+      throw new Error("stack is empty");
+    }
+    if (this.top) {
+      const tmp = this.top;
+      this.top = tmp.next;
+      this.size--;
     }
   };
 
   peak = (): T | null => {
-    if (this.container.length) {
-      return this.container[this.container.length - 1];
+    if (this.isEmpty()) {
+      throw new Error("stack is empty");
     }
-    return null;
+    return this.top?.value || null;
+  };
+
+  isEmpty = (): boolean => {
+    return this.top === null;
   };
 
   clear = (): void => {
-    this.container = [];
+    this.top = null;
+    this.size = 0;
   }
 
-  elements = (): T[] | null => {
-    return [...this.container]
+  getElements = (): T[] => {
+    let curr = this.top;
+    let arr = [];
+    while (curr) {
+      arr.push(curr.value);
+      curr = curr.next;
+    }
+    return arr.reverse();
   }
 
-  getSize = () => this.container.length;
+  getSize = () => this.size;
 }
