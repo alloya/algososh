@@ -8,6 +8,7 @@ import { Column } from "../ui/column/column";
 import { RadioInput } from "../ui/radio-input/radio-input";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import s from "./sorting-page.module.css";
+import { selectSortIteration, sorting } from "./utils";
 
 type TColumn = {
   num: number,
@@ -27,13 +28,13 @@ const VALUE = {
 export const SortingPage: React.FC = () => {
   const [ascLoader, setAscLoader] = useState(false);
   const [descLoader, setDescLoader] = useState(false);
-  const [select, setSelect] = useState(true);
+  const [selectSorting, setSelectSorting] = useState(true);
   const [bubble, setBubble] = useState(false);
   const [array, setArray] = useState<TColumn[]>([]);
 
   const handleClick = async (sortType: Direction) => {
     sortType === Direction.Ascending ? setAscLoader(true) : setDescLoader(true);
-    select ? await selectSort(sortType) : await bubbleSort(sortType);
+    selectSorting ? await performSelectSort(sortType) : await bubbleSort(sortType);
     sortType === Direction.Ascending ? setAscLoader(false) : setDescLoader(false);
   }
 
@@ -72,33 +73,40 @@ export const SortingPage: React.FC = () => {
     }
   }
 
-  const selectSort = async (sortType: Direction) => {
-    let indexToSwitch = 0;
-    let start = 0;
-    let temp = [...array];
-    while (start < array.length) {
-      for (let i = start + 1; i < array.length; i++) {
-        if (i >= 2) {
-          temp[i - 1].style = ElementStates.Default;
-        }
-        temp[indexToSwitch].style = ElementStates.Changing;
-        temp[i].style = ElementStates.Changing;
-        setArray([...temp]);
-        await delay(SHORT_DELAY_IN_MS);
-        if (sortType === Direction.Ascending ? (temp[i].num < temp[indexToSwitch].num) : (temp[i].num > temp[indexToSwitch].num)) {
-          temp[indexToSwitch].style = ElementStates.Default;
-          indexToSwitch = i
-        }
-      }
-      temp[indexToSwitch].style = ElementStates.Modified;
-      if (indexToSwitch != array.length - 1) {
-        temp[array.length - 1].style = ElementStates.Default;
-      }
-      setArray(switchFunc(temp, indexToSwitch, start));
-      start++;
-      indexToSwitch = start;
+  const performSelectSort = async (sortType: Direction) => {
+    const arr = array.map(el => el.num);
+    let sortOpt: sorting = {
+      numArray: arr,
+      minIndex: 0,
+      comparedIndex: 1,
+      lastSortedIndex: null
+    }
+    let sortedCounter = 0;
+    while (sortedCounter < array.length) {
+      setArray(colorArray(sortOpt));
+      await delay(SHORT_DELAY_IN_MS);
+      sortOpt = selectSortIteration(sortOpt, sortType)
+      setArray(colorArray(sortOpt));
+      sortedCounter = sortOpt.lastSortedIndex !== null ? sortOpt.lastSortedIndex + 1 : sortedCounter;
     }
   }
+
+  const colorArray = (sortObj: sorting): any[] => {
+    const {numArray, minIndex, comparedIndex, lastSortedIndex} = sortObj;
+    const mappedArr: TColumn[] = [];
+    numArray.map((num, index) => {
+      if (lastSortedIndex !== null && index <= lastSortedIndex) {
+        mappedArr.push({num: num, style: ElementStates.Modified} as TColumn);
+      }
+      else if (index === minIndex || index === comparedIndex) {
+        mappedArr.push({num: num, style: ElementStates.Changing} as TColumn);
+      }
+      else {
+        mappedArr.push({num: num, style: ElementStates.Default} as TColumn);
+      }
+    })
+    return mappedArr;
+  } 
 
   return (
     <SolutionLayout title="Сортировка массива">
@@ -107,12 +115,12 @@ export const SortingPage: React.FC = () => {
           <RadioInput
             label="Выбор"
             extraClass="pr-20"
-            onChange={() => { setSelect(true); setBubble(false) }}
-            checked={select} 
+            onChange={() => { setSelectSorting(true); setBubble(false) }}
+            checked={selectSorting} 
             disabled={descLoader || ascLoader} />
           <RadioInput
             label="Пузырёк"
-            onChange={() => { setSelect(false); setBubble(true) }}
+            onChange={() => { setSelectSorting(false); setBubble(true) }}
             checked={bubble}
             disabled={descLoader || ascLoader} />
         </div>
