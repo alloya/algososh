@@ -8,7 +8,7 @@ import { Column } from "../ui/column/column";
 import { RadioInput } from "../ui/radio-input/radio-input";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import s from "./sorting-page.module.css";
-import { selectSortIteration, sorting } from "./utils";
+import { bubbleSortIteration, selectSortIteration, TColoring } from "./utils";
 
 type TColumn = {
   num: number,
@@ -34,7 +34,7 @@ export const SortingPage: React.FC = () => {
 
   const handleClick = async (sortType: Direction) => {
     sortType === Direction.Ascending ? setAscLoader(true) : setDescLoader(true);
-    selectSorting ? await performSelectSort(sortType) : await bubbleSort(sortType);
+    selectSorting ? await performSelectSort(sortType) : await performBubbleSort(sortType);
     sortType === Direction.Ascending ? setAscLoader(false) : setDescLoader(false);
   }
 
@@ -45,6 +45,25 @@ export const SortingPage: React.FC = () => {
       array.push({ num: getRndInteger(VALUE.min, VALUE.max), style: ElementStates.Default });
     }
     setArray(array);
+  }
+
+  const performBubbleSort = async (sortType: Direction) => {
+    const arr = array.map(el => el.num);
+    let sortOpt: TColoring = {
+      numArray: arr,
+      firstIndex: 0,
+      secondIndex: 1,
+      sortedIndex: null
+    }
+    let sortedCounter = array.length
+    while (sortedCounter > 0) {
+      setArray(colorArray(sortOpt, 'bubble'));
+      await delay(SHORT_DELAY_IN_MS);
+      sortOpt = bubbleSortIteration(sortOpt, sortType)
+      setArray(colorArray(sortOpt, 'bubble'));
+      sortedCounter = sortOpt.sortedIndex !== null ? sortOpt.sortedIndex : sortedCounter;
+    }
+
   }
 
   const bubbleSort = async (sortType: Direction) => {
@@ -75,30 +94,30 @@ export const SortingPage: React.FC = () => {
 
   const performSelectSort = async (sortType: Direction) => {
     const arr = array.map(el => el.num);
-    let sortOpt: sorting = {
+    let sortOpt: TColoring = {
       numArray: arr,
-      minIndex: 0,
-      comparedIndex: 1,
-      lastSortedIndex: null
+      firstIndex: 0,
+      secondIndex: 1,
+      sortedIndex: null
     }
     let sortedCounter = 0;
     while (sortedCounter < array.length) {
-      setArray(colorArray(sortOpt));
+      setArray(colorArray(sortOpt, 'select'));
       await delay(SHORT_DELAY_IN_MS);
       sortOpt = selectSortIteration(sortOpt, sortType)
-      setArray(colorArray(sortOpt));
-      sortedCounter = sortOpt.lastSortedIndex !== null ? sortOpt.lastSortedIndex + 1 : sortedCounter;
+      setArray(colorArray(sortOpt, 'select'));
+      sortedCounter = sortOpt.sortedIndex !== null ? sortOpt.sortedIndex + 1 : sortedCounter;
     }
   }
 
-  const colorArray = (sortObj: sorting): any[] => {
-    const {numArray, minIndex, comparedIndex, lastSortedIndex} = sortObj;
+  const colorArray = (sortObj: TColoring, sort: string): any[] => {
+    const {numArray: numArray, firstIndex, secondIndex, sortedIndex} = sortObj;
     const mappedArr: TColumn[] = [];
     numArray.map((num, index) => {
-      if (lastSortedIndex !== null && index <= lastSortedIndex) {
+      if (sortedIndex !== null && (sort === 'select' ? (index <= sortedIndex) : (index >= sortedIndex))) {
         mappedArr.push({num: num, style: ElementStates.Modified} as TColumn);
       }
-      else if (index === minIndex || index === comparedIndex) {
+      else if (index === firstIndex || index === secondIndex) {
         mappedArr.push({num: num, style: ElementStates.Changing} as TColumn);
       }
       else {
