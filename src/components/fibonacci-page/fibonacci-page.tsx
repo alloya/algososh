@@ -4,12 +4,13 @@ import { Input } from "../ui/input/input";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { Circle } from "../ui/circle/circle";
 import s from "./fibonacci-page.module.css";
+import { getFibonacciNumbers } from "./utils";
 
 export const FibonacciPage: React.FC = () => {
   const [loader, setLoader] = useState(false);
   const [input, setInput] = useState("");
   const [fibArray, setFibArray] = useState<number[]>([]);
-  let fib: number[] = [1, 1];
+  let fib: number[] = [];
   const [justify, setJustify] = useState('center')
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,7 +26,7 @@ export const FibonacciPage: React.FC = () => {
     let interval: number | null = null;
     if (loader) {
       let array: number[] = [];
-      fibbonacci();
+      fib = getFibonacciNumbers(Number(input));
       interval = window.setInterval(() => {
         setJustify('center');
         if (fib.length !== 0) {
@@ -49,17 +50,7 @@ export const FibonacciPage: React.FC = () => {
   }, [loader])
 
 
-  const fibbonacci = () => {
-    let previous = fib[0];
-    let current = fib[1];
-    let next = fib[0] + fib[1];
-    for (let i = 0; i < Number(input) - 1; i++) {
-      fib.push(next);
-      previous = current;
-      current = next;
-      next = current + previous;
-    }
-  }
+
 
   return (
     <SolutionLayout title="Последовательность Фибоначчи">
