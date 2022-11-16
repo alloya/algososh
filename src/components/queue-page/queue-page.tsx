@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Queue } from "../../classes/queue";
+import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { TCircle } from "../../types/circle";
 import { ElementStates } from "../../types/element-states";
 import { delay, getCircle } from "../../utils/utils";
@@ -8,7 +9,6 @@ import { Circle } from "../ui/circle/circle";
 import { Input } from "../ui/input/input";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 
-const DELAY = 500;
 const QUEUE_LENGTH = 8;
 
 export const QueuePage: React.FC = () => {
@@ -32,7 +32,7 @@ export const QueuePage: React.FC = () => {
     const el = getCircle(input, ElementStates.Changing);
     queue.enqueue(el);
     setQueueEl(queue.elements());
-    await delay(DELAY);
+    await delay(SHORT_DELAY_IN_MS);
     setInput("");
     el!.style = ElementStates.Default;
     setQueueEl([...queue.elements()]);
@@ -44,14 +44,14 @@ export const QueuePage: React.FC = () => {
       const el = queue.peak();
       el!.style = ElementStates.Changing;
       setQueueEl([...queue.elements()]);
-      await delay(DELAY);
+      await delay(SHORT_DELAY_IN_MS);
       queue.dequeue();
       setQueueEl([...queue.elements()]);
       setDeleteLoader(false);
   }
 
   const clearQueue = () => {
-    setQueue(new Queue(8));
+    setQueue(new Queue(QUEUE_LENGTH));
     const clear = queueEl?.map(el => el = null)
     setQueueEl(clear);
   }

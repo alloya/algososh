@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Stack } from "../../classes/stack";
+import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { TCircle } from "../../types/circle";
 import { ElementStates } from "../../types/element-states";
 import { delay } from "../../utils/utils";
@@ -7,8 +8,6 @@ import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { Input } from "../ui/input/input";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
-
-const DELAY = 500;
 
 export const StackPage: React.FC = () => {
   const [stack, setStack] = useState(new Stack<TCircle>())
@@ -28,7 +27,7 @@ export const StackPage: React.FC = () => {
       updatedStack.push(el);
       setStack(updatedStack);
       setInput("");
-      await delay(DELAY);
+      await delay(SHORT_DELAY_IN_MS);
       el.style = ElementStates.Default;
       setStack(updatedStack.clone());
       setLoader(false);
@@ -46,7 +45,7 @@ export const StackPage: React.FC = () => {
       el.style = ElementStates.Changing;
     }
     setStack(updatedStack);
-    await delay(DELAY);
+    await delay(SHORT_DELAY_IN_MS);
     updatedStack.pop();
     setStack(updatedStack.clone());
     setDeleteLoader(false);

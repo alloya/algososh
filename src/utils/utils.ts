@@ -17,7 +17,7 @@ export const switchFunc = <T>(array: T[], firstIndex: number, secondIndex: numbe
 }
 
 export const getRandomCircleArray = () => {
-  let array: TCircle[] = [];
+  const array: TCircle[] = [];
   for (let i = 0; i < 5; i++) {
     array.push({ char: getRndInteger(0, 100).toString(), style: ElementStates.Default })
   }

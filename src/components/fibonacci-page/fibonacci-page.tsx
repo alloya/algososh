@@ -5,7 +5,6 @@ import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 import { Circle } from "../ui/circle/circle";
 import s from "./fibonacci-page.module.css";
 
-
 export const FibonacciPage: React.FC = () => {
   const [loader, setLoader] = useState(false);
   const [input, setInput] = useState("");

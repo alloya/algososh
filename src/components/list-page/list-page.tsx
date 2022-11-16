@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { LinkedList } from "../../classes/list";
+import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { TCircle } from "../../types/circle";
 import { ElementStates } from "../../types/element-states";
 import { delay, getCircle, getRandomCircleArray } from "../../utils/utils";
@@ -9,8 +10,7 @@ import { ArrowIcon } from "../ui/icons/arrow-icon";
 import { Input } from "../ui/input/input";
 import { SolutionLayout } from "../ui/solution-layout/solution-layout";
 
-const DELAY = 500;
-const defaultLoaders = {
+const DEFAULT_LOADERS = {
   "addHeadLoader": false,
   "addTailLoader": false,
   "removeHeadLoader": false,
@@ -19,22 +19,22 @@ const defaultLoaders = {
   "removeIndexLoader": false
 };
 
-const changingColor = "#d252e1";
-const defaultColor = "#0032ff";
-let disabled = false;
+const CHANGING_COLOR = "#d252e1";
+const DEFAULT_COLOR = "#0032ff";
 
 type TCircleIndex = TCircle & { index: number };
 
 export const ListPage: React.FC = () => {
-  const [linkedList, setLinkedList] = useState<LinkedList<TCircle>>(new LinkedList(getRandomCircleArray()));
+  const linkedList = useRef(new LinkedList(getRandomCircleArray())).current;
   const [list, setList] = useState<TCircle[]>(linkedList.getElements());
   const [input, setInput] = useState("");
   const [indexInput, setIndexInput] = useState("");
-  const [loaders, setLoaders] = useState(defaultLoaders);
+  const [loaders, setLoaders] = useState(DEFAULT_LOADERS);
   const [tailObject, setTailObject] = useState<TCircleIndex>({ char: "", style: ElementStates.Changing, index: -1 });
   const [headObject, setHeadObject] = useState<TCircleIndex>({ char: "", style: ElementStates.Changing, index: -1 });
-  const [color, setColor] = useState(defaultColor);
+  const [color, setColor] = useState(DEFAULT_COLOR);
   const [movingIndex, setMovingIndex] = useState(0);
+  const [disabled, setDisabled] = useState(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value)
@@ -46,26 +46,26 @@ export const ListPage: React.FC = () => {
 
   const colorList = async (index: number, type: string) => {
     type === "add"
-     ? setLoaders({ ...defaultLoaders, "addIndexLoader": true })
-     : setLoaders({ ...defaultLoaders, "removeIndexLoader": true });
-    disabled = true;
+     ? setLoaders({ ...DEFAULT_LOADERS, "addIndexLoader": true })
+     : setLoaders({ ...DEFAULT_LOADERS, "removeIndexLoader": true });
+    setDisabled(true);
     let headIndex = 0;
     while (headIndex <= index) {
       setMovingIndex(headIndex);
       list[headIndex].style = ElementStates.Changing;
-      setColor(changingColor);
+      setColor(CHANGING_COLOR);
       if (type === "add") {
         setHeadObject({ ...headObject, char: input, index: headIndex });
       }
       setList([...list]);
-      await delay(DELAY);
+      await delay(SHORT_DELAY_IN_MS);
       headIndex++;
     }
     if (type === "delete") {
       setTailObject({ ...tailObject, char: list[index].char, index: index });
       list[index].char = '';
       setList([...list]);
-      await delay(DELAY);
+      await delay(SHORT_DELAY_IN_MS);
     }
     if (type === "add") {
       linkedList.addByIndex({ char: input, style: ElementStates.Modified }, index);
@@ -77,50 +77,50 @@ export const ListPage: React.FC = () => {
     }
     setList(linkedList.getElements());
     setMovingIndex(0);
-    await delay(DELAY);
+    await delay(SHORT_DELAY_IN_MS);
     linkedList.getElements().map(el => el.style = ElementStates.Default);
     setList([...linkedList.getElements()]);
     setInput('');
     setIndexInput('');
-    disabled = false;
-    setLoaders({ ...defaultLoaders });
+    setDisabled(false);
+    setLoaders({ ...DEFAULT_LOADERS });
   }
 
   const directRemove = async (type: string) => {
     type === 'head'
-      ? setLoaders({ ...defaultLoaders, "removeHeadLoader": true })
-      : setLoaders({ ...defaultLoaders, "removeTailLoader": true });
+      ? setLoaders({ ...DEFAULT_LOADERS, "removeHeadLoader": true })
+      : setLoaders({ ...DEFAULT_LOADERS, "removeTailLoader": true });
     const index = type === 'head' ? 0 : linkedList.getSize() - 1;
-    disabled = true;
+    setDisabled(true);
     setTailObject({ ...tailObject, char: list[index].char, index: index });
     list[index].char = "";
-    await delay(DELAY);
+    await delay(SHORT_DELAY_IN_MS);
     setTailObject({ ...tailObject, char: "", index: -1 });
     index === 0 ? linkedList.deleteHead() : linkedList.deleteTail();
     setList([...linkedList.getElements()]);
-    await delay(DELAY);
-    disabled = false;
-    setLoaders({ ...defaultLoaders });
+    await delay(SHORT_DELAY_IN_MS);
+    setDisabled(false);
+    setLoaders({ ...DEFAULT_LOADERS });
   }
 
   const directAdd = async (type: string) => {
     if (!input.length) { return };
     type === 'head'
-      ? setLoaders({ ...defaultLoaders, "addHeadLoader": true })
-      : setLoaders({ ...defaultLoaders, "addTailLoader": true });
-    disabled = true;
+      ? setLoaders({ ...DEFAULT_LOADERS, "addHeadLoader": true })
+      : setLoaders({ ...DEFAULT_LOADERS, "addTailLoader": true });
+    setDisabled(true);
     setHeadObject({ ...headObject, char: input, index: type === 'head' ? 0 : linkedList.getSize() - 1 });
-    await delay(DELAY);
+    await delay(SHORT_DELAY_IN_MS);
     setHeadObject({ ...headObject, char: "", index: -1 });
     const el = getCircle(input, ElementStates.Modified);
     type === 'head' ? linkedList.prepend(el) : linkedList.append(el);
     setList(linkedList.getElements());
-    await delay(DELAY);
+    await delay(SHORT_DELAY_IN_MS);
     setInput("");
     el.style = ElementStates.Default;
     setList([...linkedList.getElements()]);
-    disabled = false;
-    setLoaders({ ...defaultLoaders });
+    setDisabled(false);
+    setLoaders({ ...DEFAULT_LOADERS });
   }
 
   const isTail = (index: number): string | null | React.ReactElement => {
@@ -202,7 +202,7 @@ export const ListPage: React.FC = () => {
               head={isHead(index)}
               tail={isTail(index)}
             />
-            {(index !== list.length - 1) && <ArrowIcon fill={index < movingIndex ? color : defaultColor} />}
+            {(index !== list.length - 1) && <ArrowIcon fill={index < movingIndex ? color : DEFAULT_COLOR} />}
           </div>)
         }
       </div>

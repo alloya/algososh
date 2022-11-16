@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { Direction } from "../../types/direction";
 import { ElementStates } from "../../types/element-states";
 import { delay, getRndInteger, switchFunc } from "../../utils/utils";
@@ -12,7 +13,16 @@ type TColumn = {
   num: number,
   style: ElementStates
 };
-const DELAY = 500;
+
+const ARRAY_LENGTH = {
+  min: 3,
+  max: 17
+}
+
+const VALUE = {
+  min: 1,
+  max: 100
+}
 
 export const SortingPage: React.FC = () => {
   const [ascLoader, setAscLoader] = useState(false);
@@ -28,10 +38,10 @@ export const SortingPage: React.FC = () => {
   }
 
   const generateArray = () => {
-    const len = getRndInteger(3, 17);
+    const len = getRndInteger(ARRAY_LENGTH.min, ARRAY_LENGTH.max);
     let array = [];
     for (let i = 0; i < len; i++) {
-      array.push(getRndInteger(1, 100));
+      array.push(getRndInteger(VALUE.min, VALUE.max));
     }
     array = array.map(el => ({ num: el, style: ElementStates.Default }))
     setArray(array);
@@ -47,11 +57,11 @@ export const SortingPage: React.FC = () => {
         if (j > 0) { temp[j - 1].style = ElementStates.Default; }
 
         setArray([...temp]);
-        await delay(DELAY)
+        await delay(SHORT_DELAY_IN_MS)
         if (sortType === Direction.Ascending ? (temp[j].num > temp[j+1].num) : (temp[j].num < temp[j+1].num)) {
           let newA = switchFunc(temp, j, j + 1);
           setArray(newA);
-          await delay(DELAY)
+          await delay(SHORT_DELAY_IN_MS)
         }
       }
       if (end-1 > 0) {
@@ -75,7 +85,7 @@ export const SortingPage: React.FC = () => {
         temp[indexToSwitch].style = ElementStates.Changing;
         temp[i].style = ElementStates.Changing;
         setArray([...temp]);
-        await delay(DELAY);
+        await delay(SHORT_DELAY_IN_MS);
         if (sortType === Direction.Ascending ? (temp[i].num < temp[indexToSwitch].num) : (temp[i].num > temp[indexToSwitch].num)) {
           temp[indexToSwitch].style = ElementStates.Default;
           indexToSwitch = i
