@@ -66,14 +66,12 @@ export const ListPage: React.FC = () => {
       list[index].char = '';
       setList([...list]);
       await delay(SHORT_DELAY_IN_MS);
+      linkedList.deleteByIndex(index);
+      setTailObject({ ...tailObject, char: "", index: -1 });
     }
     if (type === "add") {
       linkedList.addByIndex({ char: input, style: ElementStates.Modified }, index);
       setHeadObject({ ...headObject, char: "", index: -1 });
-    }
-    if (type === "delete") {
-      linkedList.deleteByIndex(index);
-      setTailObject({ ...tailObject, char: "", index: -1 });
     }
     setList(linkedList.getElements());
     setMovingIndex(0);

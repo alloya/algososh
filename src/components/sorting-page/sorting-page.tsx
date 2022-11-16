@@ -41,9 +41,8 @@ export const SortingPage: React.FC = () => {
     const len = getRndInteger(ARRAY_LENGTH.min, ARRAY_LENGTH.max);
     let array = [];
     for (let i = 0; i < len; i++) {
-      array.push(getRndInteger(VALUE.min, VALUE.max));
+      array.push({ num: getRndInteger(VALUE.min, VALUE.max), style: ElementStates.Default });
     }
-    array = array.map(el => ({ num: el, style: ElementStates.Default }))
     setArray(array);
   }
 
@@ -109,11 +108,13 @@ export const SortingPage: React.FC = () => {
             label="Выбор"
             extraClass="pr-20"
             onChange={() => { setSelect(true); setBubble(false) }}
-            checked={select} />
+            checked={select} 
+            disabled={descLoader || ascLoader} />
           <RadioInput
             label="Пузырёк"
             onChange={() => { setSelect(false); setBubble(true) }}
-            checked={bubble} />
+            checked={bubble}
+            disabled={descLoader || ascLoader} />
         </div>
         <div className="d-flex">
           <Button
