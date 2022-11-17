@@ -11,7 +11,7 @@ export const FibonacciPage: React.FC = () => {
   const [input, setInput] = useState("");
   const [fibArray, setFibArray] = useState<number[]>([]);
   let fib: number[] = [];
-  const [justify, setJustify] = useState('center')
+  const [justify, setJustify] = useState('center');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value)
@@ -47,21 +47,25 @@ export const FibonacciPage: React.FC = () => {
     return function cleanup() {
       interval && clearInterval(interval)
     }
-  }, [loader])
-
-
-
+  }, [loader]);
 
   return (
     <SolutionLayout title="Последовательность Фибоначчи">
       <div className={s.wrapper}>
         <Input max={19} isLimitText={true} extraClass={"pr-6"} onChange={handleChange} placeholder={"Введите число"} type={"number"} />
-        <Button text={"Рассчитать"} onClick={handleClick} isLoader={loader} />
-
+        <Button
+          text={"Рассчитать"}
+          onClick={handleClick}
+          isLoader={loader}
+          disabled={!input.length || Number(input) > 19 || Number(input) < 1} />
       </div>
       <div className={`d-flex justify-content-${justify} col-md-8 m-auto flex-wrap`}>
         {fibArray && fibArray.map((el, index) =>
-          <Circle letter={String(el)} key={index} index={index} extraClass={"pr-6 pt-5 mt-4 mr-auto"} />)}
+          <Circle
+            letter={String(el)}
+            key={index}
+            index={index}
+            extraClass={"pr-6 pt-5 mt-4 mr-auto"} />)}
       </div>
     </SolutionLayout>
   );

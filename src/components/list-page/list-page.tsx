@@ -45,6 +45,7 @@ export const ListPage: React.FC = () => {
   }
 
   const colorList = async (index: number, type: string) => {
+    if (index >= linkedList.getSize() || (index < 0) || (input.length === 0)) { return } 
     type === "add"
      ? setLoaders({ ...DEFAULT_LOADERS, "addIndexLoader": true })
      : setLoaders({ ...DEFAULT_LOADERS, "removeIndexLoader": true });
@@ -85,6 +86,7 @@ export const ListPage: React.FC = () => {
   }
 
   const directRemove = async (type: string) => {
+    if (linkedList.getSize() <= 0) { return };
     type === 'head'
       ? setLoaders({ ...DEFAULT_LOADERS, "removeHeadLoader": true })
       : setLoaders({ ...DEFAULT_LOADERS, "removeTailLoader": true });
@@ -150,12 +152,12 @@ export const ListPage: React.FC = () => {
           text={"Добавить в head"}
           onClick={() => directAdd('head')}
           isLoader={loaders.addHeadLoader}
-          disabled={disabled} />
+          disabled={disabled || linkedList.getSize() === 9 || input.length === 0} />
         <Button
           text={"Добавить в tail"}
           onClick={() => directAdd('tail')}
           isLoader={loaders.addTailLoader}
-          disabled={disabled} />
+          disabled={disabled || linkedList.getSize() === 9 || input.length === 0} />
         <Button
           text={"Удалить из head"}
           onClick={() => directRemove('head')}
@@ -181,13 +183,13 @@ export const ListPage: React.FC = () => {
           text={"Добавить по индексу"}
           onClick={() => colorList(Number(indexInput), "add")}
           isLoader={loaders.addIndexLoader}
-          disabled={disabled} />
+          disabled={disabled || indexInput.length === 0 || linkedList.getSize() === 9} />
         <Button
           text={"Удалить по индексу"}
           extraClass={'col'}
           onClick={() => colorList(Number(indexInput), "delete")}
           isLoader={loaders.removeIndexLoader}
-          disabled={disabled} />
+          disabled={disabled || indexInput.length === 0} />
       </div>
       <div className={`d-flex justify-content-center col-md-10 m-auto flex-wrap`}>
         {list && list.map((el, index) =>

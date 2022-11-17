@@ -63,33 +63,6 @@ export const SortingPage: React.FC = () => {
       setArray(colorArray(sortOpt, 'bubble'));
       sortedCounter = sortOpt.sortedIndex !== null ? sortOpt.sortedIndex : sortedCounter;
     }
-
-  }
-
-  const bubbleSort = async (sortType: Direction) => {
-    let temp = [...array];
-    let end = temp.length - 1;
-    for (let i = 0; i < temp.length; i++) {
-      for (let j = 0; j < temp.length - i - 1; j++) {
-        temp[j].style = ElementStates.Changing;
-        if (j+1 <= end) { temp[j + 1].style = ElementStates.Changing; }
-        if (j > 0) { temp[j - 1].style = ElementStates.Default; }
-
-        setArray([...temp]);
-        await delay(SHORT_DELAY_IN_MS)
-        if (sortType === Direction.Ascending ? (temp[j].num > temp[j+1].num) : (temp[j].num < temp[j+1].num)) {
-          let newA = switchElements(temp, j, j + 1);
-          setArray(newA);
-          await delay(SHORT_DELAY_IN_MS)
-        }
-      }
-      if (end-1 > 0) {
-        temp[end-1].style = ElementStates.Default;
-      }
-      temp[end].style = ElementStates.Modified;
-      setArray([...temp]);
-      end--;
-    }
   }
 
   const performSelectSort = async (sortType: Direction) => {
@@ -150,13 +123,13 @@ export const SortingPage: React.FC = () => {
             onClick={() => handleClick(Direction.Ascending)}
             isLoader={ascLoader}
             extraClass={"mr-6"}
-            disabled={descLoader} />
+            disabled={descLoader || !array.length} />
           <Button
             text={"По убыванию"}
             sorting={Direction.Descending}
             onClick={() => handleClick(Direction.Descending)}
             isLoader={descLoader}
-            disabled={ascLoader} />
+            disabled={ascLoader || !array.length} />
         </div>
         <Button
           text={"Новый массив"}

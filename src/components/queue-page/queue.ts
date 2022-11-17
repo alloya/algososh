@@ -32,6 +32,10 @@ export class Queue<T> implements IQueue<T> {
     this.container[this.head % this.size] = null;
     this.head = this.head + 1;
     this.length = this.length - 1;
+    if (this.isEmpty()) {
+      this.head = 0;
+      this.tail = 0;
+    }
   };
 
   peak = (): T | null => {

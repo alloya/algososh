@@ -55,7 +55,7 @@ export const StringComponent: React.FC = () => {
   }, [loader])
 
   const handleClick = async () => {
-    if (!nextReverse.length) {return}
+    if (!nextReverse.length) { return }
     setnNextReverse(nextReverse.map(el => ({ char: el.char, style: ElementStates.Default })))
     const elementsArray: TCircle[] = nextReverse.map(el => ({ char: el.char, style: ElementStates.Default }));
     setWord(elementsArray);
@@ -84,7 +84,11 @@ export const StringComponent: React.FC = () => {
     <SolutionLayout title="Строка">
       <div className={s.wrapper}>
         <Input maxLength={11} isLimitText={true} extraClass={"pr-6"} onChange={handleChange} />
-        <Button text={"Развернуть"} onClick={handleClick} isLoader={loader} />
+        <Button
+          text={"Развернуть"}
+          onClick={handleClick}
+          isLoader={loader}
+          disabled={!input.length} />
       </div>
       <div className={`d-flex justify-content-center ${s.charContainner}`}>
         {word.map((el, index) => <Circle letter={el.char} state={el.style} key={index} extraClass={"pr-6"} />)}

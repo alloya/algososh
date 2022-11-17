@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Stack } from "./stack";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { TCircle } from "../../types/circle";
@@ -15,10 +15,20 @@ export const StackPage: React.FC = () => {
   const [input, setInput] = useState("");
   const [loader, setLoader] = useState(false);
   const [deleteLoader, setDeleteLoader] = useState(false);
+  const [justify, setJustify] = useState('center');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value)
   }
+
+  useEffect(() => {
+    if (justify === 'center' && stackInstance.getSize() > 10) {
+      setJustify('start')
+    }
+    else if (justify !== 'center' && stackInstance.getSize() <= 10) {
+      setJustify('center')
+    }
+  }, [stackInstance, justify, stack])
 
   const addToStack = async () => {
     if (input.length) {
@@ -88,14 +98,14 @@ export const StackPage: React.FC = () => {
           text={"Очистить"}
           onClick={clearStack}
           disabled={loader || deleteLoader} /></div>
-      <div className={`d-flex justify-content-center col-md-8 m-auto flex-wrap`}>
+      <div className={`d-flex justify-content-${justify} col-md-8 m-auto flex-wrap`}>
         {stack?.map((el, index) =>
           <Circle
             letter={el.char}
             state={el.style}
             key={index}
             index={index}
-            extraClass={"pr-6 mr-auto"}
+            extraClass={"pr-6 mr-auto mb-30"}
             head={isTop(index)} />)}
       </div>
     </SolutionLayout>
