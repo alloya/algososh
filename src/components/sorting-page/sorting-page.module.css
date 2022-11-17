@@ -1,0 +1,11 @@
+.wrapper {
+  display: flex;
+  max-width: 924px;
+  margin: auto;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.graph {
+  height: 366px;
+}
