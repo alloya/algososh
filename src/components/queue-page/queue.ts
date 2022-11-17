@@ -2,6 +2,7 @@ interface IQueue<T> {
   enqueue: (item: T) => void;
   dequeue: () => void;
   peak: () => T | null;
+  base: () => T | null;
 }
 
 export class Queue<T> implements IQueue<T> {
@@ -49,7 +50,11 @@ export class Queue<T> implements IQueue<T> {
     if (this.isEmpty()) {
       throw new Error("No elements in the queue");
     }
-    return this.container[this.tail % this.size]
+    return this.container[this.tail % this.size - 1]
+  }
+
+  tailIndex = (): number => {
+    return this.tail;
   }
   
   elements = (): (T | null)[] => {

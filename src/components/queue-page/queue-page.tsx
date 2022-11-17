@@ -81,7 +81,7 @@ export const QueuePage: React.FC = () => {
             extraClass={'mr-6'}
             onClick={addToQueue}
             isLoader={loader}
-            disabled={deleteLoader || queue.isFull()} />
+            disabled={deleteLoader || queue.tailIndex() === queueEl?.length} />
           <Button
             text={"Удалить"}
             extraClass={'mr-6'}

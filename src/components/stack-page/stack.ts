@@ -20,7 +20,7 @@ export class Stack<T> implements IStack<T> {
   }
 
   push = (item: T): void => {
-   let node = new Node(item, this.top)
+   const node = new Node(item, this.top)
    this.top = node;
    this.size++;
   };
@@ -54,7 +54,7 @@ export class Stack<T> implements IStack<T> {
 
   getElements = (): T[] => {
     let curr = this.top;
-    let arr = [];
+    const arr = [];
     while (curr) {
       arr.push(curr.value);
       curr = curr.next;

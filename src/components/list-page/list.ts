@@ -139,7 +139,7 @@ export class LinkedList<T> implements ILinkedList<T> {
 
   getElements() {
     let curr = this.head;
-    let arr = [];
+    const arr = [];
     while (curr) {
       arr.push(curr.value);
       curr = curr.next;

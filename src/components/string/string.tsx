@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TCircle } from "../../types/circle";
 import { ElementStates } from "../../types/element-states";
-import { switchFunc } from "./utils";
+import { switchElements } from "../../utils/utils";
 import { Button } from "../ui/button/button";
 import { Circle } from "../ui/circle/circle";
 import { Input } from "../ui/input/input";
@@ -39,7 +39,7 @@ export const StringComponent: React.FC = () => {
       }, 500)
       interval = window.setInterval(() => {
         if (start < end) {
-          newOrder = switchFunc(newOrder, start, end)
+          newOrder = switchElements(newOrder, start, end)
           setWord(newOrder);
           start++;
           end--;
@@ -63,7 +63,7 @@ export const StringComponent: React.FC = () => {
   }
 
   const colorElements = (array: TCircle[], firstIndex: number, secondIndex: number): TCircle[] => {
-    let newArray: TCircle[] = [...array];
+    const newArray: TCircle[] = [...array];
     if (firstIndex !== 0 && secondIndex !== array.length - 1) {
       if (array[firstIndex - 1].style === ElementStates.Changing) {
         array[firstIndex - 1].style = ElementStates.Modified;

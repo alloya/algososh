@@ -1,5 +1,5 @@
 export  const getFibonacciNumbers = (numberOfElements: number) => {
-  let fib: number[] = [1, 1];
+  const fib: number[] = [1, 1];
   let previous = fib[0];
   let current = fib[1];
   let next = fib[0] + fib[1];

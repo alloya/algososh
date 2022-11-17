@@ -25,12 +25,12 @@ export const FibonacciPage: React.FC = () => {
   useEffect(() => {
     let interval: number | null = null;
     if (loader) {
-      let array: number[] = [];
+      const array: number[] = [];
       fib = getFibonacciNumbers(Number(input));
       interval = window.setInterval(() => {
         setJustify('center');
         if (fib.length !== 0) {
-          let elem = fib.shift()!;
+          const elem = fib.shift()!;
           array.push(elem);
           setFibArray([...array]);
         }

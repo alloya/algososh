@@ -40,7 +40,7 @@ export const SortingPage: React.FC = () => {
 
   const generateArray = () => {
     const len = getRndInteger(ARRAY_LENGTH.min, ARRAY_LENGTH.max);
-    let array = [];
+    const array = [];
     for (let i = 0; i < len; i++) {
       array.push({ num: getRndInteger(VALUE.min, VALUE.max), style: ElementStates.Default });
     }

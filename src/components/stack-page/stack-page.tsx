@@ -49,7 +49,7 @@ export const StackPage: React.FC = () => {
       return
     }
     setDeleteLoader(true);
-    let el = stackInstance.peak();
+    const el = stackInstance.peak();
     if (el) {
       el.style = ElementStates.Changing;
     }
