@@ -11,18 +11,22 @@ describe('Button component renders correctly', () => {
     const button = renderer.create(<Button text={buttonText} />).toJSON();
     expect(button).toMatchSnapshot();
   });
+
   it('without text', () => {
     const button = renderer.create(<Button />).toJSON();
     expect(button).toMatchSnapshot();
   });
+
   it('with disabled attribute', () => {
     const button = renderer.create(<Button disabled={true} />).toJSON();
     expect(button).toMatchSnapshot();
   });
+
   it('with loaded state', () => {
     const button = renderer.create(<Button isLoader={true} />).toJSON();
     expect(button).toMatchSnapshot();
   });
+  
   it('with onClick action', () => {
     window.alert = jest.fn();
     render(<Button onClick={clickFn} />);
