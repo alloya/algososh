@@ -45,7 +45,7 @@ export const ListPage: React.FC = () => {
   }
 
   const colorList = async (index: number, type: string) => {
-    if (index >= linkedList.getSize() || (index < 0) || (input.length === 0)) { return } 
+    if (index >= linkedList.getSize() || (index < 0)) { return } 
     type === "add"
      ? setLoaders({ ...DEFAULT_LOADERS, "addIndexLoader": true })
      : setLoaders({ ...DEFAULT_LOADERS, "removeIndexLoader": true });
@@ -125,14 +125,14 @@ export const ListPage: React.FC = () => {
 
   const isTail = (index: number): string | null | React.ReactElement => {
     if (tailObject.index >= 0 && index === tailObject.index) {
-      return <Circle state={ElementStates.Changing} letter={tailObject.char} isSmall={true} />
+      return <Circle state={ElementStates.Changing} letter={tailObject.char} isSmall={true} innerIndex={100} />
     }
     return index === linkedList.getSize() - 1 ? "tail" : null
   }
 
   const isHead = (index: number): string | null | React.ReactElement => {
     if (headObject.index >= 0 && index === headObject.index) {
-      return <Circle state={ElementStates.Changing} letter={input} isSmall={true} />
+      return <Circle state={ElementStates.Changing} letter={input} isSmall={true} innerIndex={100} />
     }
     return (list[index].char?.length && index === 0) ? "head" : null
   }
@@ -191,7 +191,7 @@ export const ListPage: React.FC = () => {
           isLoader={loaders.removeIndexLoader}
           disabled={disabled || indexInput.length === 0} />
       </div>
-      <div className={`d-flex justify-content-center col-md-10 m-auto flex-wrap`}>
+      <div className={`d-flex justify-content-center col-md-10 m-auto flex-wrap circle-container`}>
         {list && list.map((el, index) =>
           <div key={index} className='d-flex align-items-center'>
             <Circle
@@ -201,6 +201,7 @@ export const ListPage: React.FC = () => {
               extraClass={"p-6 mr-auto"}
               head={isHead(index)}
               tail={isTail(index)}
+              innerIndex={index}
             />
             {(index !== list.length - 1) && <ArrowIcon fill={index < movingIndex ? color : DEFAULT_COLOR} />}
           </div>)
