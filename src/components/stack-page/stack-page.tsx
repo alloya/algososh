@@ -71,33 +71,37 @@ export const StackPage: React.FC = () => {
 
   return (
     <SolutionLayout title="Стек">
-      <div className={'justify-content-between col-md-7 d-flex m-auto mb-5'}>
-        <div className="d-flex">
-          <Input
-            maxLength={4}
-            isLimitText={true}
-            extraClass={"col-md-8 pr-6"}
-            placeholder={"Введите текст"}
-            type={"text"}
-            onChange={handleChange}
-            value={input} />
-          <Button
-            text={"Добавить"}
-            extraClass={'mr-6'}
-            onClick={addToStack}
-            isLoader={loader}
-            disabled={deleteLoader} />
-          <Button
-            text={"Удалить"}
-            extraClass={'mr-6'}
-            onClick={removeFromStack}
-            isLoader={deleteLoader}
-            disabled={loader} />
-        </div>
-        <Button
-          text={"Очистить"}
-          onClick={clearStack}
-          disabled={loader || deleteLoader} /></div>
+      <div className={'justify-content-center row mb-5'}>
+        <div className="col-md-8 px-0 justify-content-center d-flex">
+          <div className="row">
+            <Input
+              maxLength={4}
+              isLimitText={true}
+              extraClass={"col-md-4 px-0"}
+              placeholder={"Введите текст"}
+              type={"text"}
+              onChange={handleChange}
+              value={input} />
+            <Button
+              text={"Добавить"}
+              extraClass={'col-auto ml-6 mr-6'}
+              onClick={addToStack}
+              isLoader={loader}
+              disabled={deleteLoader || !input.length} />
+            <Button
+              text={"Удалить"}
+              extraClass={'col-auto mr-6'}
+              onClick={removeFromStack}
+              isLoader={deleteLoader}
+              disabled={loader || !stack.length} />
+            <Button
+              text={"Очистить"}
+              onClick={clearStack}
+              extraClass={'col-auto'}
+              disabled={loader || deleteLoader || !stack.length} />
+          </div>
+
+        </div></div>
       <div className={`d-flex justify-content-${justify} col-md-8 m-auto flex-wrap`}>
         {stack?.map((el, index) =>
           <Circle
@@ -106,7 +110,8 @@ export const StackPage: React.FC = () => {
             key={index}
             index={index}
             extraClass={"pr-6 mr-auto mb-30"}
-            head={isTop(index)} />)}
+            head={isTop(index)}
+            innerIndex={index} />)}
       </div>
     </SolutionLayout>
   );

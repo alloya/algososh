@@ -20,6 +20,7 @@ describe('string page works correctly', () => {
   it('recursion works correctly', () => {
     cy.get('@input').type('string');
     cy.get('@startButton').click();
+    cy.get('@startButton').should('be.disabled');
     cy.get('[data-cy="circle-0"]').should('contain', 's').should('have.css', 'border-color', DEFAULT_COLOR);
     cy.get('[data-cy="circle-1"]').should('contain', 't').should('have.css', 'border-color', DEFAULT_COLOR);
     cy.get('[data-cy="circle-2"]').should('contain', 'r').should('have.css', 'border-color', DEFAULT_COLOR);
@@ -54,5 +55,6 @@ describe('string page works correctly', () => {
     cy.get('[data-cy="circle-3"]').should('contain', 'r').should('have.css', 'border-color', MODIFIED_COLOR);
     cy.get('[data-cy="circle-4"]').should('contain', 't').should('have.css', 'border-color', MODIFIED_COLOR);
     cy.get('[data-cy="circle-5"]').should('contain', 's').should('have.css', 'border-color', MODIFIED_COLOR);
+    cy.get('@startButton').should('not.be.disabled');
   })
 })

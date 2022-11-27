@@ -65,7 +65,8 @@ export const FibonacciPage: React.FC = () => {
             letter={String(el)}
             key={index}
             index={index}
-            extraClass={"pr-6 pt-5 mt-4 mr-auto"} />)}
+            extraClass={"pr-6 pt-5 mt-4 mr-auto"} 
+            innerIndex={index} />)}
       </div>
     </SolutionLayout>
   );
