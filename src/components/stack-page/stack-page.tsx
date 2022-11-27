@@ -100,8 +100,8 @@ export const StackPage: React.FC = () => {
               extraClass={'col-auto'}
               disabled={loader || deleteLoader || !stack.length} />
           </div>
-
-        </div></div>
+        </div>
+      </div>
       <div className={`d-flex justify-content-${justify} col-md-8 m-auto flex-wrap`}>
         {stack?.map((el, index) =>
           <Circle
