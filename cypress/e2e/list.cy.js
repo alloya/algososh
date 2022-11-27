@@ -74,7 +74,7 @@ describe('list page works correctly', () => {
       .prev().should('have.text', 'head');
     cy.tick(SHORT_DELAY_IN_MS);
     cy.get('[data-cy="circle-0"]').should('have.css', 'border-color', DEFAULT_COLOR);
-    cy.get('@inputNumber').should('not.have.value');
+    cy.get('@inputNumber').should('have.value', '');
   })
 
   it('can add an element to the stack tail', () => {
@@ -87,7 +87,7 @@ describe('list page works correctly', () => {
     cy.get('[data-cy="circle-5"]').should('contain', '1').should('have.css', 'border-color', MODIFIED_COLOR);
     cy.tick(SHORT_DELAY_IN_MS);
     cy.get('[data-cy="circle-5"]').should('have.css', 'border-color', DEFAULT_COLOR).next().next().should('have.text', 'tail');
-    cy.get('@inputNumber').should('not.have.value');
+    cy.get('@inputNumber').should('have.value', '');
   })
 
   it('remove add an element from the stack head', () => {
@@ -144,7 +144,7 @@ describe('list page works correctly', () => {
     cy.get('[data-cy="circle-0"]').should('have.css', 'border-color', DEFAULT_COLOR);
     cy.get('[data-cy="circle-1"]').should('have.css', 'border-color', DEFAULT_COLOR);
     cy.get('[data-cy="circle-2"]').should('have.css', 'border-color', DEFAULT_COLOR);
-    cy.get('@inputNumber').should('not.have.value');
+    cy.get('@inputNumber').should('have.value', '');
   })
 
   it('can add an element to the stack by index', () => {
@@ -155,9 +155,9 @@ describe('list page works correctly', () => {
     cy.get('@removeByIndex').click();
     cy.tick(SHORT_DELAY_IN_MS);
     cy.get('[data-cy="circle-0"]').should('have.css', 'border-color', CHANGING_COLOR);
-    cy.tick(SHORT_DELAY_IN_MS);
     cy.get('[data-cy="circle-1"]').should('have.css', 'border-color', CHANGING_COLOR);
-    cy.get('[data-cy="circle-1"]').next().should('contain', text1);
+    cy.tick(SHORT_DELAY_IN_MS);
+    cy.get('[data-cy="circle-1"]').next().next().should('contain', text1);
     cy.get('[data-cy="circle-100"]').should('contain', text1).should('have.css', 'border-color', CHANGING_COLOR);
     cy.tick(SHORT_DELAY_IN_MS);
     cy.get('[data-cy="circle-100"]').should('not.exist');
@@ -165,7 +165,7 @@ describe('list page works correctly', () => {
     cy.get('[data-cy="circle-0"]').should('have.css', 'border-color', DEFAULT_COLOR);
     cy.get('[data-cy="circle-1"]').should('have.css', 'border-color', DEFAULT_COLOR);
     cy.get('[data-cy="circle-2"]').should('have.css', 'border-color', DEFAULT_COLOR);
-    cy.get('@inputIndex').should('not.have.value');
+    cy.get('@inputIndex').should('have.value', '');
   })
 
 })
