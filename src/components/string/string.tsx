@@ -91,7 +91,7 @@ export const StringComponent: React.FC = () => {
           disabled={!input.length} />
       </div>
       <div className={`d-flex justify-content-center ${s.charContainner}`}>
-        {word.map((el, index) => <Circle letter={el.char} state={el.style} key={index} extraClass={"pr-6"} />)}
+        {word.map((el, index) => <Circle letter={el.char} state={el.style} key={index} extraClass={"pr-6"} innerIndex={index}/>)}
       </div>
     </SolutionLayout>
   );

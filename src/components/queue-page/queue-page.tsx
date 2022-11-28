@@ -40,14 +40,14 @@ export const QueuePage: React.FC = () => {
   }
 
   const removeFromQueue = async () => {
-      setDeleteLoader(true);
-      const el = queue.peak();
-      el!.style = ElementStates.Changing;
-      setQueueEl([...queue.elements()]);
-      await delay(SHORT_DELAY_IN_MS);
-      queue.dequeue();
-      setQueueEl([...queue.elements()]);
-      setDeleteLoader(false);
+    setDeleteLoader(true);
+    const el = queue.peak();
+    el!.style = ElementStates.Changing;
+    setQueueEl([...queue.elements()]);
+    await delay(SHORT_DELAY_IN_MS);
+    queue.dequeue();
+    setQueueEl([...queue.elements()]);
+    setDeleteLoader(false);
   }
 
   const clearQueue = () => {
@@ -66,33 +66,37 @@ export const QueuePage: React.FC = () => {
 
   return (
     <SolutionLayout title="Очередь">
-      <div className={'justify-content-between col-md-7 d-flex m-auto mb-5'}>
-        <div className="d-flex">
-          <Input
-            maxLength={4}
-            isLimitText={true}
-            extraClass={"col-md-8 pr-6"}
-            placeholder={"Введите текст"}
-            type={"text"}
-            onChange={handleChange}
-            value={input} />
-          <Button
-            text={"Добавить"}
-            extraClass={'mr-6'}
-            onClick={addToQueue}
-            isLoader={loader}
-            disabled={deleteLoader || queue.tailIndex() === queueEl?.length} />
-          <Button
-            text={"Удалить"}
-            extraClass={'mr-6'}
-            onClick={removeFromQueue}
-            isLoader={deleteLoader}
-            disabled={loader || queue.isEmpty()} />
+      <div className={'justify-content-center row mb-5'}>
+        <div className="col-md-8 px-0 justify-content-center d-flex">
+          <div className="row">
+            <Input
+              maxLength={4}
+              isLimitText={true}
+              extraClass={"col-md-4 px-0"}
+              placeholder={"Введите текст"}
+              type={"text"}
+              onChange={handleChange}
+              value={input} />
+            <Button
+              text={"Добавить"}
+              extraClass={'col-auto ml-6 mr-6'}
+              onClick={addToQueue}
+              isLoader={loader}
+              disabled={deleteLoader || queue.tailIndex() === queueEl?.length || !input.length} />
+            <Button
+              text={"Удалить"}
+              extraClass={'col-auto mr-6'}
+              onClick={removeFromQueue}
+              isLoader={deleteLoader}
+              disabled={loader || queue.isEmpty()} />
+            <Button
+              text={"Очистить"}
+              onClick={clearQueue}
+              extraClass={'col-auto'}
+              disabled={loader || deleteLoader} />
+          </div>
         </div>
-        <Button
-          text={"Очистить"}
-          onClick={clearQueue}
-          disabled={loader || deleteLoader} /></div>
+      </div>
       <div className={`d-flex justify-content-center col-md-8 m-auto flex-wrap`}>
         {queueEl?.map((el, index) =>
           <Circle
@@ -100,9 +104,10 @@ export const QueuePage: React.FC = () => {
             state={el?.style}
             key={index}
             index={index}
-            extraClass={"pr-6 mr-auto"}
+            extraClass={"pr-6 mr-auto mb-30"}
             head={isHead(index)}
-            tail={isTail(index)} />)}
+            tail={isTail(index)}
+            innerIndex={index} />)}
       </div>
     </SolutionLayout>
   );
