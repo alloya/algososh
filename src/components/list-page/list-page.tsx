@@ -137,6 +137,10 @@ export const ListPage: React.FC = () => {
     return (list[index].char?.length && index === 0) ? "head" : null
   }
 
+  const isIndexValid = () => {
+    return indexInput.length === 0 || Number(indexInput) >= linkedList.getSize() || Number(indexInput) < 0;
+  }
+
   return (
     <SolutionLayout title="Связанный список">
       <div className={'justify-content-between col-md-8 d-flex m-auto mb-3'}>
@@ -162,13 +166,13 @@ export const ListPage: React.FC = () => {
           text={"Удалить из head"}
           onClick={() => directRemove('head')}
           isLoader={loaders.removeHeadLoader}
-          disabled={disabled} />
+          disabled={disabled || linkedList.getSize() === 0} />
         <Button
           text={"Удалить из tail"}
           extraClass={''}
           onClick={() => directRemove('tail')}
           isLoader={loaders.removeTailLoader}
-          disabled={disabled} />
+          disabled={disabled || linkedList.getSize() === 0} />
       </div>
       <div className={'justify-content-between col-md-8 d-flex m-auto mb-5 pb-5'}>
         <Input
@@ -183,13 +187,13 @@ export const ListPage: React.FC = () => {
           text={"Добавить по индексу"}
           onClick={() => colorList(Number(indexInput), "add")}
           isLoader={loaders.addIndexLoader}
-          disabled={disabled || indexInput.length === 0 || linkedList.getSize() === 9} />
+          disabled={disabled || linkedList.getSize() === 9 || isIndexValid() || !input.length} />
         <Button
           text={"Удалить по индексу"}
           extraClass={'col'}
           onClick={() => colorList(Number(indexInput), "delete")}
           isLoader={loaders.removeIndexLoader}
-          disabled={disabled || indexInput.length === 0} />
+          disabled={disabled || isIndexValid()} />
       </div>
       <div className={`d-flex justify-content-center col-md-10 m-auto flex-wrap circle-container`}>
         {list && list.map((el, index) =>

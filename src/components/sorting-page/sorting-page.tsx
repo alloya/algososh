@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SHORT_DELAY_IN_MS } from "../../constants/delays";
 import { Direction } from "../../types/direction";
 import { ElementStates } from "../../types/element-states";
@@ -46,6 +46,10 @@ export const SortingPage: React.FC = () => {
     }
     setArray(array);
   }
+
+  useEffect(() => {
+    generateArray()
+  }, [])
 
   const performBubbleSort = async (sortType: Direction) => {
     const arr = array.map(el => el.num);

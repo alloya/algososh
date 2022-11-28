@@ -1,9 +1,10 @@
 import { SHORT_DELAY_IN_MS } from "../../src/constants/delays";
-import {CHANGING_COLOR, DEFAULT_COLOR, MODIFIED_COLOR} from "../../src/constants/colors";
+import { CHANGING_COLOR, DEFAULT_COLOR, MODIFIED_COLOR } from "../../src/constants/colors";
+import { getCircle } from "./utils";
 
 describe('queue page works correctly', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:3000/queue');
+    cy.visit('/queue');
     cy.contains('Добавить').as('add');
     cy.contains('Удалить').as('remove');
     cy.contains('Очистить').as('clear');
@@ -30,18 +31,18 @@ describe('queue page works correctly', () => {
     cy.get('@input').type('1');
     cy.get('@add').click();
     cy.tick(SHORT_DELAY_IN_MS);
-    cy.get('[data-cy="circle-0"]').should('contain', '1').should('have.css', 'border-color', CHANGING_COLOR)
+    cy.get(getCircle(0)).should('contain', '1').should('have.css', 'border-color', CHANGING_COLOR)
       .prev().should('have.text', 'head').next().next().next().should('have.text', 'tail');
     cy.tick(SHORT_DELAY_IN_MS);
-    cy.get('[data-cy="circle-0"]').should('contain', '1').should('have.css', 'border-color', DEFAULT_COLOR);
+    cy.get(getCircle(0)).should('contain', '1').should('have.css', 'border-color', DEFAULT_COLOR);
     cy.get('@input').should('not.have.value');
 
     cy.get('@input').type('2');
     cy.get('@add').click();
     cy.tick(SHORT_DELAY_IN_MS);
-    cy.get('[data-cy="circle-1"]').should('contain', '2').should('have.css', 'border-color', CHANGING_COLOR)
+    cy.get(getCircle(1)).should('contain', '2').should('have.css', 'border-color', CHANGING_COLOR)
       .prev().should('not.have.text', 'head').next().next().next().should('have.text', 'tail');
-    cy.get('[data-cy="circle-0"]').prev().should('have.text', 'head')
+    cy.get(getCircle(0)).prev().should('have.text', 'head')
       .next().next().next().should('not.have.text', 'tail');
   })
 
@@ -54,11 +55,11 @@ describe('queue page works correctly', () => {
     cy.get('@add').click();
     cy.tick(SHORT_DELAY_IN_MS);
     cy.get('@remove').click();
-    cy.get('[data-cy="circle-0"]').should('contain', '1').should('have.css', 'border-color', CHANGING_COLOR);
+    cy.get(getCircle(0)).should('contain', '1').should('have.css', 'border-color', CHANGING_COLOR);
     cy.tick(SHORT_DELAY_IN_MS);
-    cy.get('[data-cy="circle-0"]').should('contain', '').should('have.css', 'border-color', DEFAULT_COLOR)
+    cy.get(getCircle(0)).should('contain', '').should('have.css', 'border-color', DEFAULT_COLOR)
       .prev().should('not.have.text', 'head');
-    cy.get('[data-cy="circle-1"]').should('contain', '2')
+    cy.get(getCircle(1)).should('contain', '2')
       .prev().should('have.text', 'head').next().next().next().should('have.text', 'tail');
   })
 
@@ -72,8 +73,8 @@ describe('queue page works correctly', () => {
     cy.tick(SHORT_DELAY_IN_MS);
 
     cy.get('@clear').click();
-    cy.get('[data-cy="circle-0"]').should('contain', '');
-    cy.get('[data-cy="circle-1"]').should('contain', '');
+    cy.get(getCircle(0)).should('contain', '');
+    cy.get(getCircle(1)).should('contain', '');
   })
 
 })
